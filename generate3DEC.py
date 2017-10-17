@@ -42,8 +42,15 @@ import re
 
 
 #function_path = 'C:/Users/Rebecca Napolitano/Documents/functions/Generate_3DEC_Script/'
-
-
+def import_deformable(file_path):
+    os.chdir(file_path)
+    fileHandles_deformable = glob.glob('*_deformable.3ddat')
+    if len(fileHandles_deformable) == 0 or len(fileHandles_deformable) > 1: 
+        deformable_fileHandles = {}
+    else: 
+        deformable_fileHandles = {'deformable':fileHandles_deformable}
+    return deformable_fileHandles
+    
 def import_mortar(file_path):
     os.chdir(file_path) 
     fileHandles_mortar = glob.glob('*_mortar.3ddat')
@@ -136,6 +143,7 @@ def import_sidewall(file_path):
 
  
 def createFileHandles(file_path):
+    deformable_fileHandles = import_deformable(file_path)
     mortar_fileHandles = import_mortar(file_path)
     stone_fileHandles = import_stone(file_path)
     base_fileHandles = import_base(file_path)
@@ -146,7 +154,7 @@ def createFileHandles(file_path):
     outofplane_fileHandles = import_outofplane(file_path)
     sidewall_fileHandles = import_sidewall(file_path)
     #fileHandles = {**mortar_fileHandles, **stone_fileHandles}
-    fileHandles = {**mortar_fileHandles, **stone_fileHandles, **base_fileHandles, **brick_fileHandles, **frame_fileHandles, **infill_fileHandles,**loadblock_fileHandles, **outofplane_fileHandles, **sidewall_fileHandles}
+    fileHandles = {**deformable_fileHandles, **mortar_fileHandles, **stone_fileHandles, **base_fileHandles, **brick_fileHandles, **frame_fileHandles, **infill_fileHandles,**loadblock_fileHandles, **outofplane_fileHandles, **sidewall_fileHandles}
     # to call, fileHandles['mortar'][1 or other number]
     return fileHandles
     #return[mortar_fileHandles, stone_fileHandles]
@@ -166,7 +174,26 @@ class generateFile:
         outputOpen.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
         outputOpen.write('new\n' + ';This is file ' + str(i) + '\n')
         outputOpen.close()
-         
+        
+        if 'deformable' in fileHandles:
+            openDeformable = open(file_path + fileHandles['deformable'][0], 'r')
+            dataDeformable = openDeformable.read()
+            openDeformable.close()
+            outputOpen = open(output, 'a+')
+            outputOpen.write('\n;--------------------------------DEFORMABLE GEOMETRY-----------------------------------\n')
+            outputOpen.write(dataDeformable)
+            outputOpen.close()
+            
+            #generate mesh parameters
+            outputOpen = open(output, 'a+')
+            outputOpen.write('\n;--------------------------------DEFORMABLE PARAMETERS-----------------------------------\n')
+            #outputOpen.write('\ngen edge 100 \ngroup block mortar \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + 'bcoh ' + bcoh + 'bfric ' + bfric + 'bten ' + bten + '\n')
+            outputOpen.write('\ngen edge 100 \ngroup block deformable \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + '\n')
+            outputOpen.close()
+        else: 
+             print('There are no deformable files')
+        
+        
         #_____________________________________________________________________________________________________________________________
         if 'mortar' in fileHandles:
             #this adds the contents of one file to the end of that one
