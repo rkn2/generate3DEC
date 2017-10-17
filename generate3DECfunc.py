@@ -108,11 +108,11 @@ class generateFile:
 
     def fixBlocks(self,prevBlockTypes):
         self.outfile.write('\n;--------------------------------BASE PARAMETERS-----------------------------------\n')
-        for blockType in prevBlockTypes:
-            if blockType == 'base':
-                continue
-            self.outfile.write('\nshow')
-            self.outfile.write('\nhide range group %s'%blockType)
+#        for blockType in prevBlockTypes:
+#            if blockType == 'base':
+#                continue
+#            self.outfile.write('\nshow')
+#            self.outfile.write('\nhide range group %s'%blockType)
         self.outfile.write('\ngroup block bases \nfix \nshow \n')
 
     def hideFrontBlocks(self,prevBlockTypes):
