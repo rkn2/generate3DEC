@@ -22,7 +22,7 @@ jkn1 = '1e9 '
 jks1 = '1e9 '
 jfric1 = '30 '
 #; units are N/m3
-numCycles = '100000 '
+numCycles = '10000 '
 densitymortar = '1800 '
 ymod = ' 18e9 '
 numCycloops = '10 '
