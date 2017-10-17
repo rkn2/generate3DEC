@@ -1,0 +1,16 @@
+def getblockgroup
+	bi = block_head
+	m = 1 
+	loop while bi # 0 
+		array blockgroup( arraysize , 1) 
+		blocktype = string (b_group(bi))
+		status = string(bi) + string(blocktype)
+		blockgroup(m, 1)  = status
+		m = m + 1
+	end_loop
+	groupFileName = path + run_name + group_suffix
+   	openFile = open(groupFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(blockgroup,m)
+	closeFile = close
+	loseArray = lose_array(blockgroup)
+end

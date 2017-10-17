@@ -1,0 +1,20 @@
+def neighbors
+	ci = contact_head
+	m = 1
+    loop while ci # 0
+    		dm = 1
+    		array neighbors_( arraysize  ,1)
+     	b1 = c_b1(ci)
+		b2 = c_b2(ci)
+		status2 =(string(b1)+' '+string(b2))
+		neighbors_(m,1) = status2
+	    ci = c_next(ci)
+		m = m + dm 
+    end_loop
+    
+    infoFileName = path + run_name + neighbor_suffix
+   	openFile = open(infoFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(neighbors_,m)
+	closeFile = close
+	loseArray = lose_array(neighbors_)
+end

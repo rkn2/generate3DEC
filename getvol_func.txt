@@ -1,0 +1,16 @@
+def getvol ;PRINT OUT VOLUME OF BLOCKS
+	local bi = block_head
+	m = 1
+	loop while bi # 0 
+		array volume( arraysize ,1)
+		volume(m, 1) = string(bi)+' '+ string(b_vol(bi))
+		bi = b_next(bi)
+		m = m + 1
+	end_loop
+
+	volFileName = path + run_name + vol_suffix
+	openFile = open(volFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(volume,m)
+	closeFile = close
+	loseArray = lose_array(volume)
+end

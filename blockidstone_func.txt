@@ -1,0 +1,20 @@
+def getstoneid
+	bi = block_head
+	m = 1
+	loop while bi  # 0 
+		array blockidstone( arraysize , 1)
+		blocktype = string(b_group(bi))
+		if blocktype == 'stone' then
+			status = string(bi)
+			blockidstone(m,1) = status
+			m = m + 1
+		endif
+		bi = b_next(bi)
+
+	end_loop
+	stoneidFileName = path + run_name + stoneid_suffix
+   	openFile = open(stoneidFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(blockidstone,m)
+	closeFile = close
+	loseArray = lose_array(blockidstone)
+end

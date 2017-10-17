@@ -1,0 +1,18 @@
+def initial_centroid ;MAKE NOTE OF INITIAL LOCATION OF BLOCKS
+    local bi = block_head
+    m = 1
+    loop while bi # 0
+      b_extra(bi) = b_cent(bi)
+      array ini_centroid( arraysize, 1)
+      ini_centroid(m,1) = string(bi)+' '+ string(b_cent(bi))
+      m = m + 1		
+      bi = b_next(bi)
+    end_loop
+    
+    initialCentroidFileName = path + run_name + initialCentroid_suffix
+    openFile = open(initialCentroidFileName, IO_WRITE, IO_ASCII)
+    writeFile = write(ini_centroid,m)
+    closeFile = close
+    loseArray = lose_array(ini_centroid)
+end
+  

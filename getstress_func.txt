@@ -1,0 +1,23 @@
+def get_stress
+	bi = block_head
+	m = 1
+	loop while bi # 0
+		zi = b_zone(bi)
+		loop while zi # 0
+			array stress_( arraysize , 1)
+			status1 = string(z_sig1(zi))
+			status2 = string(z_sig3(zi))
+			;z_sig is a vector of all three types of stress, z_sig1 is major principal stress, z_sig3 is minor principal stress
+			stress_(m,1) = string(bi)+' ;;; ' + status1 + ' ;;; ' + status2  
+			zi = z_next(zi)
+			m = m + 1
+		end_loop
+	bi = b_next(bi)
+	end_loop
+	stressFileName = path + run_name + stress_suffix
+   	openFile = open(stressFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(stress_,m)
+	closeFile = close
+	loseArray = lose_array(stress_)
+
+end

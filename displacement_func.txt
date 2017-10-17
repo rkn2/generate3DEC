@@ -1,0 +1,19 @@
+def displacement ;PRINT OUT FINAL DISPLACEMENTS OF BLOCKS
+	local bi = block_head
+    	m = 1
+    	loop while bi # 0
+    		dm = 1
+    		array disp( arraysize,1)
+     		disp_ = (b_cent(bi) - b_extra(bi))
+		;status = out(string(bi)+' '+string(b_cent(bi))+' '+string(disp_))
+		status =(string(bi)+' '+ string(disp_))
+		disp(m,1) = status
+	    	bi = b_next(bi)
+		m = m + dm 
+    	end_loop
+   	dispFileName = path + run_name + disp_suffix
+   	openFile = open(dispFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(disp,m)
+	closeFile = close
+	loseArray = lose_array(disp)
+end

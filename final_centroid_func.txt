@@ -1,0 +1,19 @@
+def final_centroid ;MAKE NOTE OF FINAL LOCATION OF BLOCKS
+    local bi = block_head
+    m = 1
+    loop while bi # 0
+      b_extra(bi) = b_cent(bi)
+      array f_centroid( arraysize, 1)
+      status = string(bi)+' '+ string(b_cent(bi))
+      f_centroid(m,1) = status
+      m = m + 1		
+      bi = b_next(bi)
+    end_loop
+    
+    finalCentroidFileName = path + run_name + finalCentroid_suffix
+    openFile = open(finalCentroidFileName, IO_WRITE, IO_ASCII)
+    writeFile = write(f_centroid,m)
+    closeFile = close
+    loseArray = lose_array(f_centroid)
+end
+  

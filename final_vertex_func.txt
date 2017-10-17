@@ -1,0 +1,25 @@
+def final_vertex
+	bi = block_head
+	m = 1
+	loop while bi # 0
+		vi = b_vertex(bi)
+		status1 = ''
+		loop while vi # 0
+			array f_vertex( arraysize , 1)
+			status1 = string(status1) + string(gp_pos(vi))
+			vi = gp_next(vi)
+		end_loop
+		f_vertex(m,1) = string(bi)+' '+ status1 
+		m = m + 1
+	bi = b_next(bi)
+	end_loop
+
+	vertexFileName = path + run_name + final_vertex_suffix
+	;status = out(vertexFileName)
+   	openFile = open(vertexFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(f_vertex,m)
+	closeFile = close
+	loseArray = lose_array(f_vertex)
+	
+end
+

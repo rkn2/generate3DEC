@@ -1,0 +1,32 @@
+def setup ; SETUP KEY VARIABLES
+	IO_READ = 0
+	IO_WRITE = 1
+	IO_FISH = 0
+	IO_ASCII = 1
+	path = 'INSERT PATH HERE'
+	run_name = 'INSERT RUN NAME HERE'
+	;info_suffix = '_info.dat'
+	initialCentroid_suffix = '_iniCent.dat'	
+	finalCentroid_suffix = '_finalCent.dat'
+	vol_suffix = '_vol.dat'
+	neighbor_suffix = '_neighbor.dat'
+	initial_vertex_suffix = '_iniVertex.dat'
+	final_vertex_suffix = '_fVertex.dat'
+	stress_suffix = '_stress.dat'
+	disp_suffix = '_disp.dat'
+	stoneid_suffix = '_stoneid.dat'
+	group_suffix = '_group.dat'
+
+end
+
+;@initial_centroid
+;@initial_vertex
+;@getvol
+;@cycloop
+;@final_centroid
+;@blockidstone
+;@getblockgroup
+;@displacement
+;@final_centroid
+;@final_vertex
+;@get_stress
