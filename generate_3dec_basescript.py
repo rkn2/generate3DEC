@@ -48,15 +48,28 @@ function_path = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\
 
 # generateFile will always include 'base' first;
 
-blockList = ['deformable',
-              'mortar',
-              'brick',
-              'stone',
-              'frame',
-              'infill',
-              'loadblock',
-              'outofplane',
-              'sidewall']
+#blockList = ['deformable',
+#              'mortar',
+#              'brick',
+#              'stone',
+#              'frame',
+#              'infill',
+#              'loadblock',
+#              'outofplane',
+#              'sidewall']
+
+blockList = []
+blockList.append('deformable')
+#blockList.append('mortar')
+blockList.append('brick')
+blockList.append('stone')
+#blockList.append('frame')
+#blockList.append('infill')
+#blockList.append('loadblock')
+blockList.append('outofplane')
+#blockList.append('sidewall')
+
+
 
 
 
