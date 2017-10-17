@@ -59,7 +59,7 @@ function_path = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\
 #              'sidewall']
 
 blockTypes = []
-#blockList.append('deformable')
+blockTypes.append('deformable')
 blockTypes.append('mortar')
 blockTypes.append('brick')
 blockTypes.append('stone')
@@ -74,7 +74,7 @@ blockTypes.append('sidewall')
 
 
 blockParams = {} # COMMENT OUT GEOMETRY YOU DO NOT HAVE, TO ADD A NEW TYPE OF MATERIAL, ADD IT HERE AND IN DEF GEN3dec
-#blockParams['deformable'] = '\ngen edge 100 \ngroup block deformable \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + '\n'
+blockParams['deformable'] = '\ngen edge 100 \ngroup block deformable \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + '\n'
 blockParams['mortar'] = '\ngen edge 100 \ngroup block mortar \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + '\n'
 blockParams['brick'] = '\nprop mat 3 dens ' + densitybrick + '\n'
 blockParams['stone'] = '\nprop mat 1 dens ' + densitystone + '\n\nprop jmat 1 jkn ' + jkn1 + ' jks ' + jks1 +  ' jfric ' + jfric1 + '\n'
