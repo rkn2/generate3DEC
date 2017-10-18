@@ -23,7 +23,7 @@ class blockGroup:
             return
         if len(fileHandles[blockType]) == 0:
             return
-        openBlock = open(file_path + fileHandles[blockType][0], 'r')
+        openBlock = open(file_path + fileHandles[blockType][i], 'r')
         dataBlock = openBlock.read()
         openBlock.close()
         outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%self.name.upper())
@@ -47,7 +47,7 @@ class infillGroup(blockGroup):
                 return
             if len(fileHandles[blockType]) == 0:
                 return
-            openBlock = open(file_path + fileHandles[blockType][0], 'r')
+            openBlock = open(file_path + fileHandles[blockType][i], 'r')
             dataBlock = openBlock.read()
             openBlock.close()
             outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%self.name.upper())
@@ -180,7 +180,16 @@ class generateFile:
             
             prevBlockTypes = []
             for blockGroup in self.blockGroups:
-                blockGroup.writeToFile(i,self.outfile,self.file_path,prevBlockTypes,self.fileHandles)
+                # find corresponding blockGroup entry
+                for j in range(len(self.fileHandles[blockGroup.name])):
+                    if self.fileHandles[blockGroup.name][j].replace(blockGroup.name,'base') == self.fileHandles['base'][i]:
+                        break
+                try:
+                    if self.fileHandles[blockGroup.name][j].replace(blockGroup.name,'base') != self.fileHandles['base'][i]:
+                        print(self.fileHandles['base'][i],self.fileHandles[blockGroup.name][j])
+                except:
+                    print(len(self.fileHandles['base']),len(self.fileHandles[blockGroup.name]))
+                blockGroup.writeToFile(j,self.outfile,self.file_path,prevBlockTypes,self.fileHandles)
                 if len(self.fileHandles[blockGroup.name]) > 0:
                     prevBlockTypes.append(blockGroup.name)
               
