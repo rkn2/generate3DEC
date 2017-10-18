@@ -1,0 +1,8 @@
+def cycloop
+	loop n(1,numCycloops)
+		command 
+			cyc numCycles
+			save saveCyc
+		endcommand
+	endloop
+end
