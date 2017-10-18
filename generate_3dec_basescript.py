@@ -13,7 +13,7 @@ file_path = 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses
 """
 THE BEGINNING OF THIS FILE IS WHERE TO INPUT THE VARIABLES FOR THE SIMULATION
 """
-finalOutput = '2017_10_16_bonding-courses_3DEC_FILE.3ddat' #write a name here that your 3dec script will be called
+finalOutput = 'testy123_3DEC_FILE.3ddat' #write a name here that your 3dec script will be called
 gravity = '0 0 -10 '
 # ;m/s2'
 densitystone = '2713 '
