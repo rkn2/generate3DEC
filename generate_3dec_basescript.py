@@ -23,7 +23,7 @@ jks1 = '1e9 '
 jfric1 = '30 '
 #; units are N/m3
 numCycles = '10000 '
-densitymortar = '1800 '
+densitymortar = '1540 ' #;https://www.simetric.co.uk/si_materials.htm
 ymod = ' 18e9 '
 numCycloops = '10 '
 boundload = '-480004.7 '
