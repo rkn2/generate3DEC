@@ -54,7 +54,7 @@ class infillGroup(blockGroup):
             outfile.write(dataBlock)
 
 class generateFile:
-    def __init__(self, file_path, blockTypes, blockGroups,
+    def __init__(self, file_path, blockTypes, blockGroups, movieInterval,
                  finalOutput = None,
                  gravity = None, boundload = None,
                  function_path=None, numCycloops=0, numCycles=0, arraysize=0):
@@ -69,6 +69,7 @@ class generateFile:
         self.numCycloops = numCycloops
         self.numCycles = numCycles
         self.arraysize = arraysize
+        self.movieInterval = movieInterval
         
         self.gen3DEC()
         

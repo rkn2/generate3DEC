@@ -102,7 +102,8 @@ genFile = gen.generateFile(file_path,blockTypes,blockGroups,
                            function_path=function_path,
                            numCycloops=numCycloops,
                            numCycles=numCycles,
-                           arraysize=arraysize)
+                           arraysize=arraysize,
+                           movieInterval = movieInterval)
 # genFile.fileHandles()
 
 # genFile(finalOutput, gravity, densitystone,jkn1, jks1, jfric1, numCycles, densitymortar,ymod,numCycloops,boundload,densitybrick, densityinfill, arraysize, file_path, function_path)
