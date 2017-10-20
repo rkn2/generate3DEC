@@ -35,6 +35,8 @@ densitybrick = '2000 ' #brick wikipedia
 densityinfill = '1800 ' #check this with mike
 #;source https://www.academia.edu/1214963/The_toughness_of_Imperial_Roman_concrete
 arraysize = '1000000 '
+movieInt = int(numCycles) * int(numCycloops) / 10 
+movieInterval = str(movieInt) + ' '
 
 os.chdir(file_path)
 

@@ -1,0 +1,9 @@
+def movieSetup
+	command
+		plot set movieactive false
+		plot set movieprefix @run_name
+		plot set moviein @movieInterval
+		plot set index 1
+		plot set movieactive true
+	endcommand
+end

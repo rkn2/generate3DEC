@@ -147,6 +147,7 @@ class generateFile:
         setupOpen.close()
         setupData = re.sub(r'\bINSERT PATH HERE\b', self.file_path, setupData)
         setupData = re.sub(r'\bINSERT RUN NAME HERE\b', self.fileName, setupData)
+        setupData = re.sub(r'\bINSERT MOVIE INTERVAL HERE\b', self.movieInterval, setupData)
         self.outfile.write(setupData)
         self.outfile.write('\n;---------------------------------RUNTIME-----------------------------------\n')
         self.outfile.write('\n@setup \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n@getstoneid \n;@getblockgroup \n@cycloop \n@displacement \n@final_centroid \n@final_vertex \n@get_stress')
