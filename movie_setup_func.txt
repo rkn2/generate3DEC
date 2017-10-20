@@ -2,7 +2,12 @@ def movieSetup
 	command
 		plot set movieactive false
 		plot set movieprefix @run_name
-		plot set moviein @movieInterval
+	endcommand
+
+	movieInt = int(movieInterval)
+
+	command
+		plot set moviein @movieInt
 		plot set index 1
 		plot set movieactive true
 	endcommand

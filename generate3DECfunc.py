@@ -105,6 +105,7 @@ class generateFile:
         dataBase = openBase.read()
         openBase.close()
         self.outfile.write('\n;--------------------------------BASE GEOMETRY-----------------------------------\n')
+        self.outfile.write('\nhide')
         self.outfile.write(dataBase)                 
 
     def fixBlocks(self,prevBlockTypes):
@@ -114,7 +115,7 @@ class generateFile:
 #                continue
 #            self.outfile.write('\nshow')
 #            self.outfile.write('\nhide range group %s'%blockType)
-        self.outfile.write('\nhide \ngroup block bases \nfix \nshow \n')
+        self.outfile.write('\ngroup block bases \nfix \nshow \n')
 
     def hideFrontBlocks(self,prevBlockTypes):
         if 'outofplane' in prevBlockTypes:
@@ -151,7 +152,7 @@ class generateFile:
         setupData = re.sub(r'\bINSERT MOVIE INTERVAL HERE\b', self.movieInterval, setupData)
         self.outfile.write(setupData)
         self.outfile.write('\n;---------------------------------RUNTIME-----------------------------------\n')
-        self.outfile.write('\n@setup \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n@getstoneid \n;@getblockgroup \n@cycloop \n@displacement \n@final_centroid \n@final_vertex \n@get_stress')
+        self.outfile.write('\n@setup \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n@getstoneid \n;@getblockgroup \n@movieSetup \n@cycloop \n@displacement \n@final_centroid \n@final_vertex \n@get_stress')
 
     def joinFiles(self,i):
         #join all the files together for one massive three dec script
