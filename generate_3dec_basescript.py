@@ -7,16 +7,17 @@ sys.path.insert(0, path1) #navigate to function folder
 
 import generate3DECfunc as gen
 
-file_path = 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses/2017_10_16_simulations/' #where data files are
+file_path = 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses/2017_10_20_simulations/' #where data files are
 
 
 """
 THE BEGINNING OF THIS FILE IS WHERE TO INPUT THE VARIABLES FOR THE SIMULATION
 """
-finalOutput = 'testy456_3DEC_FILE.3ddat' #write a name here that your 3dec script will be called
+finalOutput = '2017_10_20_3DEC_FILE.3ddat' #write a name here that your 3dec script will be called
 gravity = '0 0 -10 '
 # ;m/s2'
 densitystone = '2713 '
+dampLocal = 'true' #use lowercase
 #units for density ;kg/m3 given by mike granite, cut, rough material editor'
 jkn1 = '1e9 '
 jks1 = '1e9 '
@@ -35,8 +36,7 @@ densitybrick = '2000 ' #brick wikipedia
 densityinfill = '1800 ' #check this with mike
 #;source https://www.academia.edu/1214963/The_toughness_of_Imperial_Roman_concrete
 arraysize = '1000000 '
-movieInt = int(numCycles) * int(numCycloops) / 10 
-movieInterval = str(movieInt) + ' '
+movieInterval = str(int(int(numCycles) * int(numCycloops) / 10))
 
 os.chdir(file_path)
 
@@ -103,7 +103,8 @@ genFile = gen.generateFile(file_path,blockTypes,blockGroups,
                            numCycloops=numCycloops,
                            numCycles=numCycles,
                            arraysize=arraysize,
-                           movieInterval = movieInterval)
+                           movieInterval = movieInterval, 
+                           dampLocal = dampLocal)
 # genFile.fileHandles()
 
 # genFile(finalOutput, gravity, densitystone,jkn1, jks1, jfric1, numCycles, densitymortar,ymod,numCycloops,boundload,densitybrick, densityinfill, arraysize, file_path, function_path)
