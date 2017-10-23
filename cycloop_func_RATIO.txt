@@ -1,7 +1,0 @@
-def cycloop
-	command
-		DAMP LOCAL
-		solve ratio 1e-05
-		save saveCyc
-	endcommand
-end

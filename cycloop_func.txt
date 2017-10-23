@@ -1,9 +1,7 @@
 def cycloop
-	loop n(1,numCycloops)
-		command 
-			DAMP LOCAL
-			cyc numCycles
-			save saveCyc
-		endcommand
-	endloop
+	command
+		DAMP LOCAL
+		solve ratio 1e-05
+		save saveCyc
+	endcommand
 end
