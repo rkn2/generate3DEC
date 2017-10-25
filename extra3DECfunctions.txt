@@ -1,0 +1,12 @@
+To plot unbalanced force vs time:
+	hist time
+	hist unbal
+	cyc 1
+	plot hist 2 v 1
+	then cycle
+
+To plot items like displacement magnitude vectors in color
+	plot disp color
+
+
+
