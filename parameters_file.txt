@@ -177,6 +177,12 @@ PARAMETERS
 		and the reference is A23.3 Design of Concrete Structures by Canadian Portland Cement Association 
 		SOURCE: https://www.researchgate.net/post/Is_there_any_empirical_equation_for_determining_concrete_cohesion_strength_and_internal_friction_angle
 
+		MORTAR: 
+	
+		1) c = 1e-6MPa (seems very small...)
+		citation: pg 235 Reccia (2012) FEM-DEM Modeling for Out-of-plane Loaded Masonry Panels: A Limit Analysis Approach
+
+
 	TENSILE STRENGTH:
 	
 		MORTAR:
