@@ -1,0 +1,191 @@
+PARAMETERS
+
+	DENSITY
+		
+		MORTAR:
+
+		1) 2.64 p/m 0.03 g/cm3- Roman mortar (1)
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		2) 2.60 p/m 0.02 g/cm3- Roman mortar (2)
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+		
+		3) 2.59 p/m 0.03 g/cm3- Roman mortar (3)
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		4) 2.51 p/m 0.03 g/cm3- Roman mortar (4)
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		5) 1540 kg/m3- Roman mortar
+		citation: https://www.simetric.co.uk/si_materials.htm
+
+		
+		STONE: 
+		
+		1) 2713 kg/m3- rough, cut granite 
+		citation: (mike material autocad editor) GET THIS!
+
+		BRICK: 
+		
+		1) 2000- Roman brick
+		citation: brick wikipedia
+
+
+		CONCRETE: 
+
+		1) 1800- Roman concrete
+		citation: https://www.academia.edu/1214963/The_toughness_of_Imperial_Roman_concrete
+
+		6) 1390 kg/m3- Roman mortar vitruvian hydraulic (1) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		7) 1369 kg/m3- Roman mortar vitruvian hydraulic (2) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		8) 1415 kg/m3- Roman mortar vitruvian hydraulic (3) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		9) 1398 kg/m3- Roman mortar vitruvian hydraulic (4) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+		
+		10) 1550 kg/m3- Roman mortar vitruvian hydraulic (5) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+		
+		11) 1523 kg/m3- Roman mortar vitruvian hydraulic (6) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete	
+			
+		12) 1526 kg/m3- Roman mortar vitruvian hydraulic (7) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+		
+
+	TENSIONAL STRENGTH
+		
+		MORTAR: 
+	
+		1) 0.92MPa -Roman mortar(1)
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		2) 0.537MPa - Roman mortar with aggregate(2) 
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		3) 0.21MPa- Roman mortar large aggregate (17mm) 
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		4) 1.58MPa- strongest Roman mortar 
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+
+	MODULUS OF RUPTURE (FLEXURAL STRENGTH)
+		
+		MORTAR:
+	
+		1) 0.3MPa - Roman mortar
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		2) 1.3MPa- Roman mortar
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		3) 0.16MPa- Roman mortar (1)
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		4) 0.20MPa- Roman mortar (2) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		3) 0.12MPa- Roman mortar (3) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		4) 0.16MPa- Roman mortar (4) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+	COMPRESSIVE STRENGTH
+		
+		MORTAR:
+
+		1) 1.53MPa- Roman mortar
+		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
+
+		2) 3.49MPa- Roman mortar (1) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		3) 4.47MPa- Roman mortar (2) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		4) 2.75MPa- Roman mortar (3) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		5) 4.03MPa- Roman mortar (4) 
+		citation: pg 88 Papayianni et al (2013) Analysis of ancient mortars and design of compatible repair mortars: The case study of Odeion of the archaeological site of Dion
+
+		CONCRETE:
+		
+		2) 3.9MPa- Roman mortar vitruvian hydraulic (1) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+		
+		3) 4.5MPa- Roman mortar vitruvian hydraulic (2) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		4) 3.5MPa- Roman mortar vitruvian hydraulic (3) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		5) 5.6MPa- Roman mortar vitruvian hydraulic (4) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		6) 8.5MPa- Roman mortar vitruvian hydraulic (5) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+	
+		7) 8.1MPa- Roman mortar vitruvian hydraulic (6) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+	
+		8) 7.5MPa- Roman mortar vitruvian hydraulic (7) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+
+
+	YOUNG'S MODULUS: 
+		
+		CONCRETE:
+		
+		1) 3730MPa- Roman mortar vitruvian hydraulic (1) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		2) 4230MPa- Roman mortar vitruvian hydraulic (2) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		3) 3880MPa- Roman mortar vitruvian hydraulic (3) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		4) 5160MPa- Roman mortar vitruvian hydraulic (4) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		5) 6940MPa- Roman mortar vitruvian hydraulic (5) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		6) 6280MPa- Roman mortar vitruvian hydraulic (6) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+		7) 6040MPa- Roman mortar vitruvian hydraulic (7) 
+		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
+
+	COHESION: 
+		
+		CONCRETE: 
+		
+		c is the cohesion and mju is the coefficient of friction that are for various cases as follows:
+		c=0.25mPa and mju=0.60 for concrete placed against hardened concrete with surface clean but not intentionally roughened
+		c=1.0mPa and mju=1.40 for concrete placed monolithically,
+		c=0.0mPa and mju=0.60 for concrete anchored to as-rolled structural steel by headed studs
+		and the reference is A23.3 Design of Concrete Structures by Canadian Portland Cement Association 
+		SOURCE: https://www.researchgate.net/post/Is_there_any_empirical_equation_for_determining_concrete_cohesion_strength_and_internal_friction_angle
+
+	TENSILE STRENGTH:
+	
+		MORTAR:
+		
+		1) < 0.35MPa- lime mortar  
+		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
+
+		2) 0.0.35-0.55MPa- hydraulic lime mortar  
+		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
+
+		3) > 0.6- natural pozzolanic mortars
+		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures

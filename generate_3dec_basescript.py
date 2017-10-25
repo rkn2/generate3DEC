@@ -1,3 +1,8 @@
+"""
+ENSURE THAT THE DENSITIES ARE CORRECT FOR THE DEFORMABLE OBJECTS SUCH AS CONCRETE VS MORTAR VS INFILL
+
+"""
+
 import sys
 import glob
 import os
@@ -17,14 +22,15 @@ finalOutput = '2017_10_20_3DEC_FILE.3ddat' #write a name here that your 3dec scr
 gravity = '0 0 -10 '
 # ;m/s2'
 densitystone = '2713 '
-dampLocal = 'true' #use lowercase
 #units for density ;kg/m3 given by mike granite, cut, rough material editor'
+dampLocal = 'true' #use lowercase
+
 jkn1 = '1e9 '
 jks1 = '1e9 '
 jfric1 = '30 '
 #; units are N/m3
 numCycles = '10000 '
-densitymortar = '1540 ' #;https://www.simetric.co.uk/si_materials.htm
+densitymortar = '1540 ' #; kg/m3 https://www.simetric.co.uk/si_materials.htm
 ymod = ' 18e9 '
 numCycloops = '10 '
 boundload = '-480004.7 '
@@ -77,7 +83,7 @@ blockTypes.append('outofplane')
 
 
 blockParams = {} # COMMENT OUT GEOMETRY YOU DO NOT HAVE, TO ADD A NEW TYPE OF MATERIAL, ADD IT HERE AND IN DEF GEN3dec
-blockParams['deformable'] = '\ngen edge 100 \ngroup block deformable \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + '\n'
+blockParams['deformable'] = '\ngen edge 100 \ngroup block deformable \nprop mat 2 dens ' + densityinfill + ' ymod ' + ymod + '\n'
 #blockParams['mortar'] = '\ngen edge 100 \ngroup block mortar \nprop mat 2 dens ' + densitymortar + ' ymod ' + ymod + '\n'
 blockParams['brick'] = '\nprop mat 3 dens ' + densitybrick + '\n'
 blockParams['stone'] = '\nprop mat 1 dens ' + densitystone + '\n\nprop jmat 1 jkn ' + jkn1 + ' jks ' + jks1 +  ' jfric ' + jfric1 + '\n'
