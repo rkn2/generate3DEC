@@ -5,7 +5,7 @@ import rhinoscriptsyntax as rs
 layers = rs.LayerNames() 
 for layer in layers:
     
-    if layer != 'concrete':
+    if layer != 'concrete': #can be altered to exclude anything in deformablekeys! 
     
         # select layer
         rs.Command("-_SelLayer " + layer)
@@ -31,10 +31,6 @@ for layer in layers:
         cmdstr = "-_Export " + path
         if filetype == ".wrl":
             cmdstr += " Enter Enter"
-            #cmdstr += " Angle 0.0 AspectRatio 0.0 Distance 0.1 Density 0.1 Grid 0.0 "
-            #cmdstr += " enter " 
-                    
-            #cmdstr += " Enter Enter"
         
         # execute command
         cmd = rs.Command(cmdstr)
