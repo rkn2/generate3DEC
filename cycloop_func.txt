@@ -7,6 +7,6 @@ def cycloop
 		cyc 1
 		plot hist 2 v 1
 		solve ratio 1e-05
-		save cycstate_nobc-w2-s0.2
+		save saveCyc
 	endcommand
 end
