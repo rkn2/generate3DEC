@@ -1,7 +1,12 @@
 def cycloop
 	command
-		DAMP LOCAL
+		hist time
+		hist unbal	
+		damp local
+		facetri rad8
+		cyc 1
+		plot hist 2 v 1
 		solve ratio 1e-05
-		save saveCyc
+		save cycstate_nobc-w2-s0.2
 	endcommand
 end
