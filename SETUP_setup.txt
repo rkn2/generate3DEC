@@ -5,7 +5,7 @@ def setup ; SETUP KEY VARIABLES
 	IO_ASCII = 1
 	path = 'INSERT PATH HERE'
 	run_name = 'INSERT RUN NAME HERE'
-	movieInterval = 'INSERT MOVIE INTERVAL HERE'
+	movieInterval = INSERT MOVIE INTERVAL HERE
 	;info_suffix = '_info.dat'
 	initialCentroid_suffix = '_iniCent.dat'	
 	finalCentroid_suffix = '_finalCent.dat'
