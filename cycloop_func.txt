@@ -1,11 +1,11 @@
 def cycloop
 	command
-		hist time
-		hist unbal	
+		;hist time
+		;hist unbal	
 		damp local
 		facetri rad8
-		cyc 1
-		plot hist 2 v 1
+		;cyc 1
+		;plot hist 2 v 1
 		solve ratio 1e-05
 		save saveCyc
 	endcommand
