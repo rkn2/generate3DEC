@@ -26,7 +26,7 @@ class blockGroup:
         
         #here we need to switch it from an order to checking the names since those are all the same
         openBlock = open(file_path + fileHandles[blockType][i], 'r') #OLD FORMAT
-        openBlock = open(file_path + fileHandles)
+        #openBlock = open(file_path + fileHandles)
         dataBlock = openBlock.read()
         openBlock.close()
         outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%self.name.upper())
