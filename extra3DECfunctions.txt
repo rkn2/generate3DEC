@@ -8,5 +8,9 @@ To plot unbalanced force vs time:
 To plot items like displacement magnitude vectors in color
 	plot disp color
 
+to plot displacement magnitude
+	plot contour displacement
 
+to plot stress
+	plot zonecolorscale sminimum
 
