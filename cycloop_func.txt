@@ -1,12 +1,36 @@
 def cycloop
+	ratInit = '1e-0'
+	i = 0
 	command
-		;hist time
-		;hist unbal	
 		damp local
 		facetri rad8
-		;cyc 1
-		;plot hist 2 v 1
-		solve ratio 1e-05
-		save saveCyc
 	endcommand
+	loop while i < 6
+		i_string = string(i)
+		rat = ratInit + i_string			
+		rat = float(rat)
+		saveFile = saveCyc + string(i)
+		dispMFile = saveFile + 'dispM'
+		dispxFile = saveFile + 'xdisp'
+		dispyFile = saveFile + 'ydisp'
+		dispzFile = saveFile + 'zdisp'
+		minpStressFile = saveFile + 'minpStress'
+		maxpStressFile = saveFile + 'maxpStress'	
+
+		command
+			;hist time
+			;hist unbal
+			;cyc 1
+			;plot hist 2 v 1
+			solve ratio @rat cyc 50000
+			save saveCyc
+			plot bitmap plot dispM filename @dispMFile
+			plot bitmap plot xdisp filename @dispxFile
+			plot bitmap plot ydisp filename @dispyFile
+			plot bitmap plot zdisp filename @dispzFile
+			plot bitmap plot minpStress filename @minpStressFile
+			plot bitmap plot maxpStress filename @maxpStressFile
+		endcommand	
+		i = i + 1
+	end_loop
 end
