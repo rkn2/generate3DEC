@@ -161,7 +161,8 @@ class generateFile:
         #setupData = setupData.replace(self.movieInterval, self.movieInterval.strip("'"))
         self.outfile.write(setupData)
         self.outfile.write('\n;---------------------------------RUNTIME-----------------------------------\n')
-        self.outfile.write('\n@setup \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n@getstoneid \n;@getblockgroup \n@movieSetup \n@cycloop \n@displacement \n@final_centroid \n@final_vertex \n@get_stress')
+        self.outfile.write('\n@setup \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n@getstoneid \n@movieSetup \n@makeMoviePlots \n@cycloop \n@plot_cracks \n@makeCrackPlots \n@plotCrackPlot \n@displacement \n@final_centroid \n@final_vertex \n@get_stress \n@clearPlots')
+        
 
     def joinFiles(self,i):
         #join all the files together for one massive three dec script
