@@ -1,15 +1,18 @@
 def plot_cracks(threshold)
   local ci = contact_head
+  count = 0 
   loop while ci # 0
     local cxi = c_cx(ci)
     loop while cxi # 0
       if cx_ndis(cxi) > threshold
         c_group(ci) = 'crack'
         status = out('crack found')
+        count = count + 1
       end_if
       cxi = cx_next(cxi)
     end_loop
     ci = c_next(ci)
   end_loop
+  status = out(count)
 end
-;@plot_cracks(0.01) 
+@plot_cracks(0.0005) 

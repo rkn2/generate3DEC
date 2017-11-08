@@ -14,3 +14,5 @@ to plot displacement magnitude
 to plot stress
 	plot zonecolorscale sminimum
 
+to change to a specific plot:
+	plot current plot <insertnamehere>
