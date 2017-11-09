@@ -9,13 +9,13 @@ def cycloop
 		i_string = string(i)
 		rat = ratInit + i_string			
 		rat = float(rat)
-		saveFile = saveCyc + string(i)
-		dispMFile = saveFile + 'dispM'
-		dispxFile = saveFile + 'xdisp'
-		dispyFile = saveFile + 'ydisp'
-		dispzFile = saveFile + 'zdisp'
-		minpStressFile = saveFile + 'minpStress'
-		maxpStressFile = saveFile + 'maxpStress'	
+		saveFile = "saveCyc_" + string(i)
+		dispMFile = saveFile + 'dispM'+ string(".png")
+		dispxFile = saveFile + 'xdisp'+ string(".png")
+		dispyFile = saveFile + 'ydisp'+ string(".png")
+		dispzFile = saveFile + 'zdisp'+ string(".png")
+		minpStressFile = saveFile + 'minpStress'+ string(".png")
+		maxpStressFile = saveFile + 'maxpStress'+ string(".png")
 
 		command
 			;hist time
