@@ -74,6 +74,15 @@ PARAMETERS
 		4) 1.58MPa- strongest Roman mortar 
 		citation: pg 1125 Drdacky et al (2013) The Roman mortars used in the construction of the Ponte di Augusto (Narni, Italy) - A comprehensive assessment
 
+		5) < 0.35MPa- lime mortar  
+		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
+
+		6) 0.0.35-0.55MPa- hydraulic lime mortar  
+		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
+
+		7) > 0.6- natural pozzolanic mortars
+		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
+
 
 	MODULUS OF RUPTURE (FLEXURAL STRENGTH)
 		
@@ -140,7 +149,6 @@ PARAMETERS
 		citation: pg 580 Gotti et al (2008) A comparison of the chemical and engineering characteristics of ancient roman hydraulic concrete with a modern reproduction of vitruvian hydraulic concrete
 
 
-
 	YOUNG'S MODULUS: 
 		
 		CONCRETE:
@@ -182,16 +190,5 @@ PARAMETERS
 		1) c = 1e-6MPa (seems very small...)
 		citation: pg 235 Reccia (2012) FEM-DEM Modeling for Out-of-plane Loaded Masonry Panels: A Limit Analysis Approach
 
-
-	TENSILE STRENGTH:
 	
-		MORTAR:
-		
-		1) < 0.35MPa- lime mortar  
-		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
 
-		2) 0.0.35-0.55MPa- hydraulic lime mortar  
-		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
-
-		3) > 0.6- natural pozzolanic mortars
-		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
