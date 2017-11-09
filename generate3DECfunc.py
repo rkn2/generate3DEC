@@ -210,7 +210,7 @@ class generateFile:
             self.outfile.write('\nhide \n')
             #assign properties                
             stoneMatList = ['stone', 'frame', 'loadblock', 'outofplane', 'sidewall']
-            mortarMatList = ['mortar', 'infill', 'deformable']
+            mortarMatList = ['mortar', 'infill', 'deformable', 'concrete']
             brickMatList = ['brick']
               
             for entry in stoneMatList:
