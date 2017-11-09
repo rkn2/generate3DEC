@@ -1,15 +1,26 @@
 def normals
 	local ci = contact_head
 	count = 0
+	count2 = 0
 	loop while ci # 0
 		c_extra(ci) = c_ny(ci)
 		if c_extra(ci) # 0
+			count2 = count2 + 1
 			b1 = c_b1(ci)
 			b1 = b_id(b1)
 			b2 = c_b2(ci)
 			b2 = b_id(b2)
-			if b2 = 1 ;this has some
-				status = out('Got one!' + string(b1)+ '_' + string(b2))
+			status = out(string(b1) + '_' + string(b2))
+			if b2 = 2
+				command
+					hide
+					show range bid @b1
+					show range bid @b2
+					change jmat 2
+					show
+				endcommand				
+			end_if
+			if b2 = 1 
 				command
 					hide
 					show range bid @b1
@@ -17,19 +28,16 @@ def normals
 					change jmat 2
 					show
 				endcommand
-				;status = out(string(b1) + '_'+  string(b2)) 
+
 				count = count + 1 
 			end_if
 
-			;joint_id = c_id(ci)
-			;status = out(joint_id)
-			;status = out(c_extra(ci))
-			;c_group(ci) = 'concrete_contact'
 			
 		end_if
 		ci = c_next(ci)
 	end_loop
 	status = out(count)
+	status = out(count2)
 end
 @normals
 
