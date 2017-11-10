@@ -2,7 +2,7 @@ def plotCrackPlot
   jNormalDispFile = "saveCyc" + "_jNormalDisp"
   jNormalStressFile = "saveCyc" + "_jNormalStress"
   	command
-  		plot bitmap plot jNormalDisp filename jNormalDispFile
- 	 	plot bitmap plot jNormalStress filename jNormalStressFile
+  		plot bitmap plot jNormalDisp filename @jNormalDispFile
+ 	 	plot bitmap plot jNormalStress filename @jNormalStressFile
   	endcommand  
 end
