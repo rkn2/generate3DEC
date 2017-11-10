@@ -9,7 +9,7 @@ def cycloop
 		i_string = string(i)
 		rat = ratInit + i_string			
 		rat = float(rat)
-		saveFile = "saveCyc_" + string(i)
+		saveFile = "saveCyc" + "_" +string(i)
 		dispMFile = saveFile + 'dispM'+ string(".png")
 		dispxFile = saveFile + 'xdisp'+ string(".png")
 		dispyFile = saveFile + 'ydisp'+ string(".png")
