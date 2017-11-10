@@ -57,7 +57,7 @@ class infillGroup(blockGroup):
             outfile.write(dataBlock)
 
 class generateFile:
-    def __init__(self, file_path, blockTypes, blockGroups, movieInterval,dampLocal,
+    def __init__(self, file_path, blockTypes, blockGroups, movieInterval,dampLocal, functions,
                  finalOutput = None,
                  gravity = None, boundload = None,
                  function_path=None, numCycloops=0, numCycles=0, arraysize=0):
@@ -74,6 +74,7 @@ class generateFile:
         self.arraysize = arraysize
         self.movieInterval = movieInterval
         self.dampLocal = dampLocal
+        self.functions = functions
         
         self.gen3DEC()
         
@@ -161,7 +162,7 @@ class generateFile:
         #setupData = setupData.replace(self.movieInterval, self.movieInterval.strip("'"))
         self.outfile.write(setupData)
         self.outfile.write('\n;---------------------------------RUNTIME-----------------------------------\n')
-        self.outfile.write('\n@setup \n@normals \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n@getstoneid \n@movieSetup \n@makeMoviePlots \n@cycloop \n@plot_cracks \n@makeCrackPlots \n@plotCrackPlot \n@displacement \n@final_centroid \n@final_vertex \n@get_stress \n@clearPlots')
+        self.outfile.write(self.functions)
         
 
     def joinFiles(self,i):
