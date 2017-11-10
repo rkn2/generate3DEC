@@ -216,17 +216,17 @@ class generateFile:
             for entry in stoneMatList:
                 if entry in prevBlockTypes:
                     self.outfile.write('\nhide \nshow range group ' + entry)
-            self.outfile.write('\nchange mat 1 \nshow \n')
+                    self.outfile.write('\nchange mat 1 \nshow \n')
               
             for entry in mortarMatList: 
                 if entry in prevBlockTypes:
                     self.outfile.write('\nhide \nshow range group ' + entry)
-            self.outfile.write('\nchange mat 2 \nshow \n')
+                    self.outfile.write('\nchange mat 2 \nshow \n')
               
             for entry in brickMatList: 
                 if entry in prevBlockTypes:
                     self.outfile.write('\nhide \nshow range group ' + entry)
-            self.outfile.write('\nchange mat 3 \nshow \n')
+                    self.outfile.write('\nchange mat 3 \nshow \n')
 
             if( self.gravity ):
                 self.grav()
