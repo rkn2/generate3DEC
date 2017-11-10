@@ -57,7 +57,7 @@ class infillGroup(blockGroup):
             outfile.write(dataBlock)
 
 class generateFile:
-    def __init__(self, file_path, blockTypes, blockGroups, movieInterval,dampLocal, functions,
+    def __init__(self, file_path, blockTypes, blockGroups, movieInterval,dampLocal, functions, solveRatio,
                  finalOutput = None,
                  gravity = None, boundload = None,
                  function_path=None, numCycloops=0, numCycles=0, arraysize=0):
@@ -75,6 +75,7 @@ class generateFile:
         self.movieInterval = movieInterval
         self.dampLocal = dampLocal
         self.functions = functions
+        self.solveRatio = solveRatio
         
         self.gen3DEC()
         
@@ -145,6 +146,7 @@ class generateFile:
             functiondata = re.sub(r'\bnumCycles\b', self.numCycles, functiondata)
             functiondata = re.sub(r'\bsaveCyc\b', saveCyc, functiondata)
             functiondata = re.sub(r'\barraysize\b', self.arraysize, functiondata )
+            functiondata = re.sub(r'\bsolveRatio\b', self.solveRatio, functiondata)
             self.outfile.write(functiondata)
             self.outfile.write('\n')
              

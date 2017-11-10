@@ -5,7 +5,7 @@ def cycloop
 		damp local
 		facetri rad8
 	endcommand
-	loop while i < 6
+	loop while i < solveRatio
 		i_string = string(i)
 		rat = ratInit + i_string			
 		rat = float(rat)
