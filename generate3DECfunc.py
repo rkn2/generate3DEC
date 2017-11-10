@@ -57,7 +57,7 @@ class infillGroup(blockGroup):
             outfile.write(dataBlock)
 
 class generateFile:
-    def __init__(self, file_path, blockTypes, blockGroups, movieInterval,dampLocal, functions, solveRatio,
+    def __init__(self, file_path, blockTypes, blockGroups, movieInterval, dampLocal, functions, solveRatio, facetri,
                  finalOutput = None,
                  gravity = None, boundload = None,
                  function_path=None, numCycloops=0, numCycles=0, arraysize=0):
@@ -76,6 +76,7 @@ class generateFile:
         self.dampLocal = dampLocal
         self.functions = functions
         self.solveRatio = solveRatio
+        self.facetri = facetri
         
         self.gen3DEC()
         
@@ -141,6 +142,8 @@ class generateFile:
             saveCyc = 'cycstate_' + self.fileName
             if self.dampLocal != 'true':
                 functiondata = re.sub(r'\bDAMP LOCAL\b', '' , functiondata)
+            if self.facetri != 'true':
+                functiondata = re.sub(r'\bfacetri rad8\b', '' , functiondata)
 
             functiondata = re.sub(r'\bnumCycloops\b', self.numCycloops, functiondata)
             functiondata = re.sub(r'\bnumCycles\b', self.numCycles, functiondata)

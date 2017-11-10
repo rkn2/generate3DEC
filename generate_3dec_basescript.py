@@ -24,6 +24,7 @@ gravity = '0 0 -10 '
 densitystone = '2713 '
 #units for density ;kg/m3 given by mike granite, cut, rough material editor'
 dampLocal = 'true' #use lowercase
+facetri = 'false'
 
 jkn1 = '1e9 '
 jks1 = '1e9 '
