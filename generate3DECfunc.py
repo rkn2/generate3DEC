@@ -207,7 +207,7 @@ class generateFile:
                     prevBlockTypes.append(blockGroup.name)
               
             self.outfile.write('\n;-------------------------------- PARAMETERS-----------------------------------\n')
-            self.outfile.write('\nhide \n')
+            #self.outfile.write('\nhide \n')
             #assign properties                
             stoneMatList = ['stone', 'frame', 'loadblock', 'outofplane', 'sidewall']
             mortarMatList = ['mortar', 'infill', 'deformable', 'concrete']
@@ -215,18 +215,18 @@ class generateFile:
               
             for entry in stoneMatList:
                 if entry in prevBlockTypes:
-                    self.outfile.write('\nshow range group ' + entry)
-            self.outfile.write('\nchange mat 1 \nshow \nhide \n')
+                    self.outfile.write('\nhide \nshow range group ' + entry)
+            self.outfile.write('\nchange mat 1 \nshow \n')
               
             for entry in mortarMatList: 
                 if entry in prevBlockTypes:
-                    self.outfile.write('\nshow range group ' + entry)
-            self.outfile.write('\nchange mat 2 \nshow \nhide \n')
+                    self.outfile.write('\nhide \nshow range group ' + entry)
+            self.outfile.write('\nchange mat 2 \nshow \n')
               
             for entry in brickMatList: 
                 if entry in prevBlockTypes:
-                    self.outfile.write('\nshow range group ' + entry)
-            self.outfile.write('\nchange mat 3 \nshow \nhide \n')
+                    self.outfile.write('\nhide \nshow range group ' + entry)
+            self.outfile.write('\nchange mat 3 \nshow \n')
 
             if( self.gravity ):
                 self.grav()
