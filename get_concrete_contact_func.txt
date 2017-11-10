@@ -39,6 +39,5 @@ def normals
 	status = out(count)
 	status = out(count2)
 end
-@normals
 
 
