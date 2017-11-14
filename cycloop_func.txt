@@ -1,5 +1,5 @@
 def cycloop
-	ratInit = '1e-0'
+	rat = float('1e-0')
 	i = 0
 	command
 		damp local
@@ -7,8 +7,7 @@ def cycloop
 	endcommand
 	loop while i < solveRatio
 		i_string = string(i)
-		rat = ratInit + i_string			
-		rat = float(rat)
+		rat = rat / 2
 		saveFile = "saveCyc" + "_" +string(i)
 		dispMFile = saveFile + 'dispM'+ string(".png")
 		dispxFile = saveFile + 'xdisp'+ string(".png")
