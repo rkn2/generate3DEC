@@ -163,7 +163,8 @@ class generateFile:
         setupData = setupOpen.read()
         setupOpen.close()
         setupData = re.sub(r'\bINSERT PATH HERE\b', self.file_path, setupData)
-        setupData = re.sub(r'\bINSERT RUN NAME HERE\b', self.fileName, setupData)
+        saveFile = self.fileName + '_' + str(i)
+        setupData = re.sub(r'\bINSERT RUN NAME HERE\b', saveFile, setupData)
         setupData = re.sub(r'\bINSERT MOVIE INTERVAL HERE\b', self.movieInterval, setupData)
         #only this line changed ^ 
         #setupData = setupData.replace(self.movieInterval, self.movieInterval.strip("'"))
