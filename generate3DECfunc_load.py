@@ -14,7 +14,7 @@ class blockGroup:
         
     def writeToFile(self,i,outfile,file_path,prevBlockTypes, fileHandles):
         self.writeGeometry(i,outfile,file_path, fileHandles)
-        self.writeParams(i,outfile,prevBlockTypes)
+        self.writeParams(outfile,prevBlockTypes)
         
     def writeGeometry(self,i,outfile,file_path, fileHandles):
         #this adds the contents of one file to the end of that one
@@ -25,14 +25,14 @@ class blockGroup:
             return
         
         #here we need to switch it from an order to checking the names since those are all the same
-        openBlock = open(file_path + fileHandles[blockType][i], 'r') #OLD FORMAT
+        openBlock = open(file_path + fileHandles[blockType][0], 'r') #OLD FORMAT
         #openBlock = open(file_path + fileHandles)
         dataBlock = openBlock.read()
         openBlock.close()
         outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%self.name.upper())
         outfile.write(dataBlock)
         
-    def writeParams(self,i,outfile,prevBlockTypes):
+    def writeParams(self,outfile,prevBlockTypes):
         #generate mesh parameters
         outfile.write('\n;--------------------------------%s PARAMETERS-----------------------------------\n'%self.name.upper())
         outfile.write(self.params)
@@ -42,7 +42,7 @@ class blockGroup:
             outfile.write('\ngroup block %s \nshow \n'%self.name)
 
 class infillGroup(blockGroup):
-    def writeGeometry(self,i,outfile,file_path, fileHandles):
+    def writeGeometry(self,outfile,file_path, fileHandles):
         #this adds the contents of one file to the end of that one
         blockType = self.name
         for j in range (len(fileHandles[self.name])):
@@ -50,7 +50,7 @@ class infillGroup(blockGroup):
                 return
             if len(fileHandles[blockType]) == 0:
                 return
-            openBlock = open(file_path + fileHandles[blockType][i], 'r')
+            openBlock = open(file_path + fileHandles[blockType][0], 'r')
             dataBlock = openBlock.read()
             openBlock.close()
             outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%self.name.upper())
@@ -109,8 +109,8 @@ class generateFile:
         self.outfile.write('\nhide \nshow range group loadblock \n')
         self.outfile.write('\nbound zload ' + self.boundload + 'range group loadblock \nshow \n')
 
-    def baseGeometry(self,i):
-        openBase = open(self.file_path + self.fileHandles['base'][i], 'r')
+    def baseGeometry(self):
+        openBase = open(self.file_path + self.fileHandles['base'][0], 'r')
         dataBase = openBase.read()
         openBase.close()
         self.outfile.write('\n;--------------------------------BASE GEOMETRY-----------------------------------\n')
@@ -130,18 +130,18 @@ class generateFile:
         if 'outofplane' in prevBlockTypes:
             self.outfile.write('\nhide range group outofplane \n')
 
-    def writeFunctions(self):
+    def writeFunctions(self,i):
         os.chdir(self.function_path)
         functionFiles = glob.glob('*_func.txt')
         numFunctions = len(functionFiles)
         os.chdir(self.file_path)
         self.outfile.write('\n;--------------------------------FUNCTIONS-----------------------------------\n')
          
-        for i in range(numFunctions):
-            functionOpen = open(self.function_path + functionFiles[i])
+        for k in range(numFunctions):
+            functionOpen = open(self.function_path + functionFiles[k])
             functiondata = functionOpen.read()
             functionOpen.close()
-            saveCyc = 'cycstate_' + self.fileName
+            saveCyc = 'cycstate_' + self.fileName + '_' + str(i)
             if self.dampLocal != 'true':
                 functiondata = re.sub(r'\bDAMP LOCAL\b', '' , functiondata)
             if self.facetri != 'true':
@@ -172,31 +172,32 @@ class generateFile:
         self.outfile.write(self.functions)
         
 
-    def joinFiles(self,i):
+    def joinFiles(self):
         #join all the files together for one massive three dec script
         output = self.file_path + self.fileName + '.3ddat'
         print('writing to %s'%output)
         outputOpen = open(output, 'r')
         fullData = outputOpen.read()
         outputOpen.close()
-        if i == 0:
-            mode = 'w+'
-        else:
-            mode = 'a+'
-        outputOpen = open(self.file_path + self.finalOutput, mode)
+#        if i == 0:
+#            mode = 'w+'
+#        else:
+#            mode = 'a+'
+        outputOpen = open(self.file_path + self.finalOutput, 'w+')
         fullData = re.sub(r'\bret\b','',fullData)
         outputOpen.write(fullData)
         outputOpen.write('\n\n\n\n\n\n')
         outputOpen.close()        
    
-    i = 0
+    
     def gen3DEC(self):
-        while i < maxLoad + 1
-            self.fileName = self.fileHandles['base'][i][0:-11] 
-            writefile = self.fileName + '.3ddat'
-            output = self.file_path + writefile
-            self.outfile = open(output,'w+')
-              
+
+        self.fileName = self.fileHandles['base'][0][0:-11] 
+        writefile = self.fileName + '.3ddat'
+        output = self.file_path + writefile
+        self.outfile = open(output,'w+')
+        i = 0
+        while i < self.maxLoad + 1: 
             self.outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
             self.outfile.write('new\n' + ';This is file ' + str(i) + '\n')
             
@@ -204,10 +205,10 @@ class generateFile:
             for blockGroup in self.blockGroups:
                 # find corresponding blockGroup entry
                 for j in range(len(self.fileHandles[blockGroup.name])):
-                    if self.fileHandles[blockGroup.name][j].replace(blockGroup.name,'base') == self.fileHandles['base'][i]:
+                    if self.fileHandles[blockGroup.name][j].replace(blockGroup.name,'base') == self.fileHandles['base'][0]:
                         break
                 try:
-                    if self.fileHandles[blockGroup.name][j].replace(blockGroup.name,'base') != self.fileHandles['base'][i]:
+                    if self.fileHandles[blockGroup.name][j].replace(blockGroup.name,'base') != self.fileHandles['base'][0]:
                         print(self.fileHandles['base'][i],self.fileHandles[blockGroup.name][j])
                 except:
                     print(len(self.fileHandles['base']),len(self.fileHandles[blockGroup.name]))
@@ -241,17 +242,18 @@ class generateFile:
                 self.grav()
             if( self.boundload and 'loadblock' in prevBlockTypes ):
                 self.loadBlock()
-            
-            self.baseGeometry(i)
+            self.outfile.write('\nbound xload ' + str(i) + ' range x 0 0.24 z 1.2 3.3')
+            self.baseGeometry()
             self.fixBlocks(prevBlockTypes)
             self.hideFrontBlocks(prevBlockTypes)
             
             if( self.function_path ):
-                self.writeFunctions()
-            
-            self.outfile.close()
-            
-            self.joinFiles(i)
-            
+                self.writeFunctions(i)
             i = i + self.interval
+            
+        self.outfile.close()
+            
+        self.joinFiles()
+            
+            
 #==============================================================================

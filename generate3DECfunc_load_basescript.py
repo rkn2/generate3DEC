@@ -6,20 +6,19 @@ ENSURE THAT THE DENSITIES ARE CORRECT FOR THE DEFORMABLE OBJECTS SUCH AS CONCRET
 import sys
 #import glob
 import os
-import math
 
 path1 = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 sys.path.insert(0, path1) #navigate to function folder
 
-import generate3DECfunc as gen
+import generate3DECfunc_load as gen
 
-file_path = 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses/2017_11_15_lowfric_persistent/bc/' #where data files are
+file_path = 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses/2017_12_6_lateral/nobc/' #where data files are
 
 
 """
 THE BEGINNING OF THIS FILE IS WHERE TO INPUT THE VARIABLES FOR THE SIMULATION
 """
-finalOutput = '2017_11_16_bc_jfric30_persistent_3DEC_FILE.3ddat' #write a name here that your 3dec script will be called
+finalOutput = '2017_11_16_lateral_nobc_3DEC_FILE.3ddat' #write a name here that your 3dec script will be called
 gravity = '0 0 -10 '
 # ;m/s2
 densitystone = '2560 '
@@ -48,8 +47,10 @@ ymod = ' 18e9 '
 
 numCycloops = '10 '
 boundload = '-480004.7 '
-maxLoad = 1000 #N
-interval = 500 #N
+
+maxLoad = 1000 #n
+interval = 50 #n
+
 #dont forget the negative sign
 #area of load = 2.785m^2
 #20psf from mike = 0.137895 MPa
@@ -62,6 +63,8 @@ arraysize = '1000000 '
 movieInterval = '10000 '
 
 endRatio = -6
+
+
 
 #solveRatio = str(math.ceil((math.log10(math.pow(1,-1)/math.pow(1,endRatio)/math.log10(2)))))
 solveRatio = ' 18' #remember it goes until the one before this, so if you want 5 make this 6 HARDCODED
@@ -116,7 +119,7 @@ blockParams['stone'] = '\nprop mat 1 dens ' + densitystone + '\n\nprop jmat 1 jk
 #blockParams['outofplane'] = '\n;they are the same as the stone parameters\n'
 #blockParams['sidewall'] = '\n;they are the same as the stone parameters\n'
 
-functions = '\n@setup \n;@normals \n@neighbors \n@initial_centroid \n@initial_vertex \n@getvol \n;@getstoneid \n@movieSetup \n@makeMoviePlots \n@cycloop \n@plot_cracks \n@makeCrackPlots \n@plotCrackPlot \n@displacement \n@final_centroid \n@final_vertex \n@get_stress \n@clearPlots'
+functions = '\n@setup \n;@normals \n;@neighbors \n@initial_centroid \n@initial_vertex \n;@getvol \n;@getstoneid \n;@movieSetup \n;@makeMoviePlots \n@cycloop \n;@plot_cracks \n;@makeCrackPlots \n;@plotCrackPlot \n@displacement \n@final_centroid \n@final_vertex \n@get_stress \n;@clearPlots'
 
 # make a list of blockGroup objects
 blockGroups = []

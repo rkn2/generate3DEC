@@ -23,12 +23,12 @@ def cycloop
 			;plot hist 2 v 1
 			solve ratio @rat cyc 50000
 			save saveCyc
-			plot bitmap plot dispM filename @dispMFile
-			plot bitmap plot xdisp filename @dispxFile
-			plot bitmap plot ydisp filename @dispyFile
-			plot bitmap plot zdisp filename @dispzFile
-			plot bitmap plot minpStress filename @minpStressFile
-			plot bitmap plot maxpStress filename @maxpStressFile
+			;plot bitmap plot dispM filename @dispMFile
+			;plot bitmap plot xdisp filename @dispxFile
+			;plot bitmap plot ydisp filename @dispyFile
+			;plot bitmap plot zdisp filename @dispzFile
+			;plot bitmap plot minpStress filename @minpStressFile
+			;plot bitmap plot maxpStress filename @maxpStressFile
 		endcommand	
 		i = i + 1
 	end_loop
