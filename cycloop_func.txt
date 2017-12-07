@@ -8,7 +8,7 @@ def cycloop
 	loop while i < solveRatio
 		i_string = string(i)
 		rat = rat / 2
-		saveFile = "saveCyc" + "_" +string(i)
+		saveFile = "saveCyc" ;+ "_" +string(i)
 		dispMFile = saveFile + 'dispM'+ string(".png")
 		dispxFile = saveFile + 'xdisp'+ string(".png")
 		dispyFile = saveFile + 'ydisp'+ string(".png")
