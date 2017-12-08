@@ -21,7 +21,7 @@ def cycloop
 			;hist unbal
 			;cyc 1
 			;plot hist 2 v 1
-			solve ratio @rat cyc 50000
+			solve ratio @rat cyc 10000
 			save saveCyc
 			;plot bitmap plot dispM filename @dispMFile
 			;plot bitmap plot xdisp filename @dispxFile
