@@ -83,6 +83,11 @@ PARAMETERS
 		7) > 0.6- natural pozzolanic mortars
 		citation: pg 298 Moropoulou et al (2005) Composite materials in ancient structures
 
+		CONCRETE:
+		
+		1) 1MPa - Roman concrete 
+		citation: http://framcos.org/FraMCoS-7/01-06.pdf 
+
 
 	MODULUS OF RUPTURE (FLEXURAL STRENGTH)
 		
