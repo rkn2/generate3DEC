@@ -1,9 +1,0 @@
-def cycloop
-	loop n(1,numCycloops)
-		command 
-			DAMP LOCAL
-			cyc numCycles
-			save saveCyc
-		endcommand
-	endloop
-end
