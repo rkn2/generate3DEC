@@ -78,13 +78,13 @@ class generateFile:
         self.functions = functions
         self.solveRatio = solveRatio
         self.facetri = facetri
-        self.boundload1 = boundload1, 
-        self.boundload2 = boundload2, 
-        self.boundload3 = boundload3, 
-        self.boundload4 = boundload4, 
-        self.bid1 = bid1,
-        self.bid2 = bid2, 
-        self.bid3 = bid3, 
+        self.boundload1 = boundload1
+        self.boundload2 = boundload2
+        self.boundload3 = boundload3
+        self.boundload4 = boundload4
+        self.bid1 = bid1
+        self.bid2 = bid2 
+        self.bid3 = bid3
         self.loadrange = loadrange
     
         self.gen3DEC()
@@ -114,10 +114,10 @@ class generateFile:
     
     def loadBlock(self):    
         self.outfile.write('\nhide \nshow range group loadblock \n')
-        self.outfile.write('\nbound zload ' + self.boundload1 + 'range bid bid1 \nshow \n')
-        self.outfile.write('\nbound zload ' + self.boundload2 + 'range bid bid1 \nshow \n')
-        self.outfile.write('\nbound zload ' + self.boundload3 + 'range bid bid1 \nshow \n')
-        self.outfile.write('\nbound zload ' + self.boundload4 + 'range ' + self.loadrange + '\nshow \n')
+        self.outfile.write('\nbound zload ' + self.boundload1 + ' range bid ' + self.bid1 + ' \nshow \n')
+        self.outfile.write('\nbound zload ' + self.boundload2 + ' range bid ' + self.bid2 + ' \nshow \n')
+        self.outfile.write('\nbound zload ' + self.boundload3 + ' range bid ' + self.bid3 + ' \nshow \n')
+        self.outfile.write('\nbound zload ' + self.boundload4 + ' range ' + self.loadrange + ' \nshow \n')
 
     def baseGeometry(self,i):
         openBase = open(self.file_path + self.fileHandles['base'][i], 'r')
@@ -134,7 +134,7 @@ class generateFile:
 #                continue
 #            self.outfile.write('\nshow')
 #            self.outfile.write('\nhide range group %s'%blockType)
-        self.outfile.write('\ngroup block bases \nfix \nshow \n')
+        self.outfile.write('\njoin group block bases \nfix \nshow \n')
 
     def hideFrontBlocks(self,prevBlockTypes):
         if 'outofplane' in prevBlockTypes:
@@ -248,7 +248,7 @@ class generateFile:
 
             if( self.gravity ):
                 self.grav()
-            if( self.boundload and 'loadblock' in prevBlockTypes ):
+            if('loadblock' in prevBlockTypes ):
                 self.loadBlock()
             
             self.baseGeometry(i)
