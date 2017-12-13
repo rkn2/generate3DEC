@@ -4,7 +4,7 @@ def plot_cracks;(threshold)
   loop while ci # 0
     local cxi = c_cx(ci)
     loop while cxi # 0
-      if cx_ndis(cxi) > 0.01
+      if cx_ndis(cxi) > 0.001
         c_group(ci) = 'crack'
         status = out('crack found')
         count = count + 1

@@ -57,7 +57,8 @@ class infillGroup(blockGroup):
             outfile.write(dataBlock)
 
 class generateFile:
-    def __init__(self, file_path, blockTypes, blockGroups, movieInterval, dampLocal, functions, solveRatio, facetri,
+    def __init__(self, file_path, blockTypes, blockGroups, movieInterval, dampLocal, functions, solveRatio, facetri, 
+                 boundload1, boundload2, boundload3, boundload4, bid1, bid2, bid3, loadrange, 
                  finalOutput = None,
                  gravity = None, boundload = None,
                  function_path=None, numCycloops=0, numCycles=0, arraysize=0):
@@ -77,7 +78,15 @@ class generateFile:
         self.functions = functions
         self.solveRatio = solveRatio
         self.facetri = facetri
-        
+        self.boundload1 = boundload1, 
+        self.boundload2 = boundload2, 
+        self.boundload3 = boundload3, 
+        self.boundload4 = boundload4, 
+        self.bid1 = bid1,
+        self.bid2 = bid2, 
+        self.bid3 = bid3, 
+        self.loadrange = loadrange
+    
         self.gen3DEC()
         
     def import_3ddat_files(self,blockType,maxFiles=None):
@@ -108,7 +117,7 @@ class generateFile:
         self.outfile.write('\nbound zload ' + self.boundload1 + 'range bid bid1 \nshow \n')
         self.outfile.write('\nbound zload ' + self.boundload2 + 'range bid bid1 \nshow \n')
         self.outfile.write('\nbound zload ' + self.boundload3 + 'range bid bid1 \nshow \n')
-        self.outfile.write('\nbound zload ' + self.boundload4 + 'range group loadblock4 \nshow \n')
+        self.outfile.write('\nbound zload ' + self.boundload4 + 'range ' + self.loadrange + '\nshow \n')
 
     def baseGeometry(self,i):
         openBase = open(self.file_path + self.fileHandles['base'][i], 'r')
