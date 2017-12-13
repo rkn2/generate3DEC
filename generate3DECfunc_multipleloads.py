@@ -134,7 +134,7 @@ class generateFile:
 #                continue
 #            self.outfile.write('\nshow')
 #            self.outfile.write('\nhide range group %s'%blockType)
-        self.outfile.write('\njoin group block bases \nfix \nshow \n')
+        self.outfile.write('\njoin \ngroup block bases \nfix \nshow \n')
 
     def hideFrontBlocks(self,prevBlockTypes):
         if 'outofplane' in prevBlockTypes:
