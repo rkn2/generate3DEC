@@ -45,24 +45,33 @@ class experiment():
         #gets all the fileHandles
         for geometry in self.geometries:
             self.fileHandles[geometry.label] = glob.glob(self.filePath + '*_' + geometry.label + '.3ddat')
-            #checks to make sure only base has multiple files !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ERROR HERE.. DOES NOT ACCEPT MULTIPLE BASE FILES
-            length = len(self.fileHandles[geometry.label])
-            if geometry.label != 'base':
-                continue
-            else:
-                if length > 1:
-                    print('There are too many ' + geometry.label + ' files!')
-            #removes filepath and suffix from fileHandles
-            i = 0
-            while i < length:
-                self.fileHandles[geometry.label][i] = self.fileHandles[geometry.label][i].replace('.3ddat', '').replace(self.filePath, '')
-                i = i + 1
-            #checks to make sure all input geometries have correponding files
-            if self.fileHandles == []:
-                print('There are no geometry files of type ' + geometry.label)
-                    
+            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
+
         
-    def writeGeometry(self):        
+    def writeGeometry(self,i,outfile):
+        #start by writing them in any order
+        if self.iterator == 'base':
+            for geometry in self.geometries:
+                
+                if geometry.label == 'base':
+                    print(self.fileHandles['base'][1])
+                    openBlock = open(self.fileHandles['base'][i])
+                    dataBlock = openBlock.read()
+                    openBlock.close()
+                    outfile.write('\n;--------------------------------BASE GEOMETRY-----------------------------------\n')
+                    outfile.write(dataBlock)
+                    
+                else:
+                    openBlock = open(self.fileHandles[geometry.label][0])
+                    dataBlock = openBlock.read()
+                    openBlock.close()
+                    outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
+                    outfile.write(dataBlock)
+            
+        #if self.iterator == 'load'
+            # COMEEEEEEEEEEEEEEEEEEEEEEEE BACCCCCCCCCCCCCCCCKKKKKKKKKK LATERRRRRRRRRRRRRRRRRRRRRR
+    
+    def write3DECFile(self, ):        
         # first assign indices to unique materials
         for i in range(len(self.materials)):
             self.materials[i].idx = i
@@ -73,27 +82,36 @@ class experiment():
         
         if iterator == 'base':
             numSimulations = len(self.fileHandles['base'])
+            print(numSimulations)
             for i in range (numSimulations):
-                #get file name    
-                self.fileName = self.fileHandles['base'][i].strip('base')
+                #get file name
+                self.fileName = self.fileHandles['base'][i]
+                
+                
+                #same stuff probably
+                #removes filepath, base, and suffix from fileName
+                self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
                 writeFile = self.fileName + '.3ddat'
-                print(writeFile)
                 output = self.filePath + writeFile
-                #open the file and start writing
-                self.outfile = open(output, 'w+')
-                self.outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-                self.outfile.write('new\n' + ';This is file ' + str(i) + '\n')                
-                self.outfile.close()
+                #open the file and writing
+                outfile = open(output, 'w+')
+                outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
+                outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
+                
+                #open the file and write the geometry
+                self.writeGeometry(i, outfile)
+                
+                
+            #### WRITE ABOVE AS SEPARATE FUNCTION AND THEN 
             
             
             
-            
-#        if iterator == 'load':
-#            numSimulations = load_max/load_iterator
-#            for i in range(numSimulations):
-#                fileName = self.fileHandles['base'][0] + 
-                    # COMEEEEEEEEEEEEEEEEEEEEEEEE BACCCCCCCCCCCCCCCCKKKKKKKKKK LATERRRRRRRRRRRRRRRRRRRRRR
-        
+        if iterator == 'load':
+            numSimulations = (self.load_max-self.load_min)/self.load_iterator
+            for i in range(numSimulations):
+                self.fileName = self.fileHandles['base'][0]
+                #FUNCTION HERE THAT DOES THE REPLILCATED MOTIONS
+                
 
         
 
@@ -126,4 +144,4 @@ my_experiment.addGeometry('mortar', mortar)
 my_experiment.addGeometry('stone', stone)
 
 # write geometries to 3dec file
-my_experiment.writeGeometry()
+my_experiment.write3DECFile()
