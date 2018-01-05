@@ -38,34 +38,26 @@ class experiment():
             self.geometries.append(newGeo)
         if mat not in self.materials:
             self.materials.append(mat)
-    
-    def getFileHandles(self):
-        
-        self.fileHandles = {}
-        #gets all the fileHandles
-        for geometry in self.geometries:
-            self.fileHandles[geometry.label] = glob.glob(self.filePath + '*_' + geometry.label + '.3ddat')
-            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
 
+    #used in writegeometrybymat    
+    def writeGeometry(self,i,outfile, geometry):  
         
-    def writeGeometry(self,i,outfile):
         #start by writing them in any order
         if self.iterator == 'base':
-            for geometry in self.geometries:
+            #for geometry in self.geometries:
+            if geometry.label == 'base':
+                openBlock = open(self.fileHandles['base'][i])
+                dataBlock = openBlock.read()
+                openBlock.close()
+                outfile.write('\n;--------------------------------BASE GEOMETRY-----------------------------------\n')
+                outfile.write(dataBlock)
                 
-                if geometry.label == 'base':
-                    openBlock = open(self.fileHandles['base'][i])
-                    dataBlock = openBlock.read()
-                    openBlock.close()
-                    outfile.write('\n;--------------------------------BASE GEOMETRY-----------------------------------\n')
-                    outfile.write(dataBlock)
-                    
-                else:
-                    openBlock = open(self.fileHandles[geometry.label][0])
-                    dataBlock = openBlock.read()
-                    openBlock.close()
-                    outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
-                    outfile.write(dataBlock)
+            else:
+                openBlock = open(self.fileHandles[geometry.label][0])
+                dataBlock = openBlock.read()
+                openBlock.close()
+                outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
+                outfile.write(dataBlock)
             
         if self.iterator == 'load':
             for geometry in self.geometries:
@@ -75,6 +67,31 @@ class experiment():
                     outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
                     outfile.write(dataBlock)
     
+    #used in write3decfile
+    def writeGeometryByMat(self, i, outfile):
+        #this writes geometry for any deformable materials
+        for geometry in self.geometries:
+            keys = list(geometry.material.properties.keys())
+            if 'edge' in keys:
+                print('For iteration ' + str(i) + ' write this deformable geom first ' + geometry.label)
+                self.writeGeometry(i, outfile, geometry)
+        
+        #this writes geometry for any rigid materials        
+        for geometry in self.geometries:
+            keys = list(geometry.material.properties.keys())
+            if 'edge' not in keys:
+                print('For iteration ' + str(i) + ' write this rigid geom second ' + geometry.label)
+                self.writeGeometry(i, outfile, geometry)
+    
+    #used in write3decfile                
+    def getFileHandles(self):
+        
+        self.fileHandles = {}
+        #gets all the fileHandles
+        for geometry in self.geometries:
+            self.fileHandles[geometry.label] = glob.glob(self.filePath + '*_' + geometry.label + '.3ddat')
+            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
+
 
     def write3DECFile(self):        
         # first assign indices to unique materials
@@ -100,10 +117,12 @@ class experiment():
                 outfile = open(output, 'w+')
                 outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
                 outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
-            
+                
                 #open the file and write the geometry
-                self.writeGeometry(i, outfile)
-            
+                self.writeGeometryByMat(i, outfile)
+                
+                #write parameters in
+                
             
             
         if iterator == 'load':
@@ -122,9 +141,9 @@ class experiment():
                 outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
                 
                 #open the file and write the geometry
-                self.writeGeometry(i, outfile)
+                self.writeGeometryByMat(i, outfile)
 
-        
+                #write parameters in 
 
 
 #============================================================
@@ -132,15 +151,15 @@ class experiment():
 # set up experiment
 filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'load' #can iterate over base or load !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IS THIS HARDCODING..?
-#if iterator = 'load' the following parameters need to be specified !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEAL WITH THIS AFTER BASE STARTS WORKING
+iterator = 'base' #can iterate over base or load !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IS THIS HARDCODING..?
+#if iterator = 'load' the following parameters need to be specified 
 load_min = 0
 load_max = 1000
 load_iterator = 250 
 my_experiment = experiment(filePath, outFileName, iterator, load_min, load_max, load_iterator)
 
 # define materials
-mortar = material({'dens':2200})
+mortar = material({'dens':2200, 'edge':True})
 stone = material({'dens':2400})
 fixedstone = material({'dens':2400,'fixity':'fix'}) #could not copy to work  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HOW SHOULD I GET FIXITY TO WORK, ITS DIFFERENT THAN OTHER PROPERTIES, NEEDS TO BE OWN LINE AND ONLY SAY "FIX"
 
