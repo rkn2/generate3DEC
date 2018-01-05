@@ -54,7 +54,6 @@ class experiment():
             for geometry in self.geometries:
                 
                 if geometry.label == 'base':
-                    print(self.fileHandles['base'][1])
                     openBlock = open(self.fileHandles['base'][i])
                     dataBlock = openBlock.read()
                     openBlock.close()
@@ -77,8 +76,7 @@ class experiment():
                     outfile.write(dataBlock)
     
 
-
-    def write3DECFile(self, ):        
+    def write3DECFile(self):        
         # first assign indices to unique materials
         for i in range(len(self.materials)):
             self.materials[i].idx = i
@@ -89,12 +87,11 @@ class experiment():
         
         if iterator == 'base':
             numSimulations = len(self.fileHandles['base'])
-            print(numSimulations)
             for i in range (numSimulations):
                 #get file name
                 self.fileName = self.fileHandles['base'][i]
                 
-                #same stuff probably
+                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REDUNDANT TEXT BELOW, DOESNT WORK WHEN I CONDENSE IT INTO WRITEGEOMETRY
                 #removes filepath, base, and suffix from fileName
                 self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
                 writeFile = self.fileName + '.3ddat'
@@ -103,10 +100,9 @@ class experiment():
                 outfile = open(output, 'w+')
                 outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
                 outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
-                
+            
                 #open the file and write the geometry
                 self.writeGeometry(i, outfile)
-                
             
             
             
@@ -114,12 +110,11 @@ class experiment():
             numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
             for i in range(numSimulations):
                 self.fileName = self.fileHandles['base'][0]
-                #FUNCTION HERE THAT DOES THE REPLILCATED MOTIONS
                 
-                #same stuff probably
+                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REDUNDANT TEXT BELOW, DOESNT WORK WHEN I CONDENSE IT INTO WRITEGEOMETRY
                 #removes filepath, base, and suffix from fileName
                 self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
-                writeFile = self.fileName + '_' + str(i) + '.3ddat'
+                writeFile = self.fileName + '_' + str(i*load_iterator) + '.3ddat'
                 output = self.filePath + writeFile
                 #open the file and writing
                 outfile = open(output, 'w+')
@@ -141,7 +136,7 @@ iterator = 'load' #can iterate over base or load !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #if iterator = 'load' the following parameters need to be specified !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEAL WITH THIS AFTER BASE STARTS WORKING
 load_min = 0
 load_max = 1000
-load_iterator = 500 
+load_iterator = 250 
 my_experiment = experiment(filePath, outFileName, iterator, load_min, load_max, load_iterator)
 
 # define materials
