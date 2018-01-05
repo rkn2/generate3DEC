@@ -20,7 +20,7 @@ class geometry():
         
 class experiment():
     # holds all the necessary objects to run an experiment
-    def __init__(self, filePath, outFileName, iterator, load_min = None, load_max = None, load_iterator = None):
+    def __init__(self, filePath, outFileName, iterator, load_min = 0, load_max = 0, load_iterator = 0):
         self.filePath = filePath
         self.geometries = []
         self.materials = []
@@ -68,9 +68,16 @@ class experiment():
                     outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
                     outfile.write(dataBlock)
             
-        #if self.iterator == 'load'
-            # COMEEEEEEEEEEEEEEEEEEEEEEEE BACCCCCCCCCCCCCCCCKKKKKKKKKK LATERRRRRRRRRRRRRRRRRRRRRR
+        if self.iterator == 'load':
+            for geometry in self.geometries:
+                    openBlock = open(self.fileHandles[geometry.label][0])
+                    dataBlock = openBlock.read()
+                    openBlock.close()
+                    outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
+                    outfile.write(dataBlock)
     
+
+
     def write3DECFile(self, ):        
         # first assign indices to unique materials
         for i in range(len(self.materials)):
@@ -87,7 +94,6 @@ class experiment():
                 #get file name
                 self.fileName = self.fileHandles['base'][i]
                 
-                
                 #same stuff probably
                 #removes filepath, base, and suffix from fileName
                 self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
@@ -101,17 +107,27 @@ class experiment():
                 #open the file and write the geometry
                 self.writeGeometry(i, outfile)
                 
-                
-            #### WRITE ABOVE AS SEPARATE FUNCTION AND THEN 
             
             
             
         if iterator == 'load':
-            numSimulations = (self.load_max-self.load_min)/self.load_iterator
+            numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
             for i in range(numSimulations):
                 self.fileName = self.fileHandles['base'][0]
                 #FUNCTION HERE THAT DOES THE REPLILCATED MOTIONS
                 
+                #same stuff probably
+                #removes filepath, base, and suffix from fileName
+                self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+                writeFile = self.fileName + '_' + str(i) + '.3ddat'
+                output = self.filePath + writeFile
+                #open the file and writing
+                outfile = open(output, 'w+')
+                outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
+                outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
+                
+                #open the file and write the geometry
+                self.writeGeometry(i, outfile)
 
         
 
@@ -121,12 +137,12 @@ class experiment():
 # set up experiment
 filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'base' #can iterate over base or load !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IS THIS HARDCODING..?
+iterator = 'load' #can iterate over base or load !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IS THIS HARDCODING..?
 #if iterator = 'load' the following parameters need to be specified !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEAL WITH THIS AFTER BASE STARTS WORKING
-#load_min = 0
-#load_max = 1000
-#load_iterator = 25 
-my_experiment = experiment(filePath, outFileName, iterator)
+load_min = 0
+load_max = 1000
+load_iterator = 500 
+my_experiment = experiment(filePath, outFileName, iterator, load_min, load_max, load_iterator)
 
 # define materials
 mortar = material({'dens':2200})
