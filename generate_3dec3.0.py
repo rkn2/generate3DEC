@@ -41,31 +41,17 @@ class experiment():
 
     #used in writegeometrybymat    
     def writeGeometry(self,i,outfile, geometry):  
-        
-        #start by writing them in any order
-        if self.iterator == 'base':
-            #for geometry in self.geometries:
-            if geometry.label == 'base':
-                openBlock = open(self.fileHandles['base'][i])
-                dataBlock = openBlock.read()
-                openBlock.close()
-                outfile.write('\n;--------------------------------BASE GEOMETRY-----------------------------------\n')
-                outfile.write(dataBlock)
-                
-            else:
-                openBlock = open(self.fileHandles[geometry.label][0])
-                dataBlock = openBlock.read()
-                openBlock.close()
-                outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
-                outfile.write(dataBlock)
+        if self.iterator == 'base' and geometry.label == 'base':
+            index = i
             
-        if self.iterator == 'load':
-            for geometry in self.geometries:
-                    openBlock = open(self.fileHandles[geometry.label][0])
-                    dataBlock = openBlock.read()
-                    openBlock.close()
-                    outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
-                    outfile.write(dataBlock)
+        else: 
+            index = 0
+        #uses information about the iterator to make the index    
+        openBlock = open(self.fileHandles[geometry.label][index])
+        dataBlock = openBlock.read()
+        openBlock.close()
+        outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
+        outfile.write(dataBlock)    
     
     #used in write3decfile
     def writeGeometryByMat(self, i, outfile):
@@ -73,14 +59,14 @@ class experiment():
         for geometry in self.geometries:
             keys = list(geometry.material.properties.keys())
             if 'edge' in keys:
-                print('For iteration ' + str(i) + ' write this deformable geom first ' + geometry.label)
+                #print('For iteration ' + str(i) + ' write this deformable geom first ' + geometry.label)
                 self.writeGeometry(i, outfile, geometry)
         
         #this writes geometry for any rigid materials        
         for geometry in self.geometries:
             keys = list(geometry.material.properties.keys())
             if 'edge' not in keys:
-                print('For iteration ' + str(i) + ' write this rigid geom second ' + geometry.label)
+                #print('For iteration ' + str(i) + ' write this rigid geom second ' + geometry.label)
                 self.writeGeometry(i, outfile, geometry)
     
     #used in write3decfile                
