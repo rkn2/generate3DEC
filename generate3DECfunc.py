@@ -195,7 +195,7 @@ class generateFile:
             self.outfile = open(output,'w+')
               
             self.outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-            self.outfile.write('new\n' + ';This is file ' + str(i) + '\n')
+            self.outfile.write('new\n' + ';This is file ' + str(i) + '\n'
             
             prevBlockTypes = []
             for blockGroup in self.blockGroups:
