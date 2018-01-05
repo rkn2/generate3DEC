@@ -15,7 +15,7 @@ class block():
         self.genEdge = genEdge
         self.fixity = fixity
         
-    def writeGeometry(self, i, j, outfile, data_path, fileHandles):
+    def writeGeometry(self, i, outfile, data_path, fileHandles):
         for j in range(len(self.fileHandles[block.label])):
             #this makes sure both i and j are in range. Do we have all the files we are supposed to?
             try:
@@ -97,7 +97,7 @@ class simulation():
         self.fileHandles['base'] = self.import_3ddat_files('base')
         
         #figure out how many bases there are
-        self.maxFiles = len(fileHandles['base'])
+        self.maxFiles = len(self.fileHandles['base'])
         
         #for all the rest of the blocks, import them using import_3ddat_file above
         #this skips base since they were already imported
@@ -116,28 +116,13 @@ class simulation():
             self.outfile = open(output, 'w+')
             
             #fileHeader
-            outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
+            self.outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
             self.outfile.write('new\n' + ';This is file ' + str(i) + '\n')
              
-            #mark down which blocks are deformable
-            deformBlocks = []
-            for b in blocks:
-                if b.genEdge == True:
-                    deformBlocks.append(b)
-                
-            #write down the deformable blocks first in the output fiels        
             for block in blocks:
-                if block in deformBlocks:                
-                        block.writeToFile(j,self.outfile, self.data_path, blocks, self.fileHandles)
-                        if len(self.fileHandles[block.label]) > 0:
-                            blocks.append(block.label)
-                                    
-            #now write everything else    
-            for block in blocks:
-                if block is not in deformBlocks:
-                    block.writeToFile(j,self.outfile, self.data_path, blocks, self.fileHandles)
-                        if len(self.fileHandles[block.label]) > 0:
-                            blocks.append(block.label)
+                block.writeToFile(j,self.outfile, self.data_path, blocks, self.fileHandles)
+                if len(self.fileHandles[block.label]) > 0:
+                    blocks.append(block.label)
                 
             #now join the files, do this in a separate function
                 
