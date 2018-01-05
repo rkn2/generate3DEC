@@ -75,8 +75,9 @@ class experiment():
             numSimulations = len(self.fileHandles['base'])
             for i in range (numSimulations):
                 #get file name    
-                self.fileName = self.fileHandles['base'][i]
-                writeFile = self.fileName = '.3ddat'
+                self.fileName = self.fileHandles['base'][i].strip('base')
+                writeFile = self.fileName + '.3ddat'
+                print(writeFile)
                 output = self.filePath + writeFile
                 #open the file and start writing
                 self.outfile = open(output, 'w+')
