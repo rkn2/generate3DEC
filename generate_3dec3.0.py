@@ -40,18 +40,20 @@ class experiment():
             self.materials.append(mat)
 
     #used in writegeometrybymat    
-    def writeGeometry(self,i,outfile, geometry):  
+    def writeGeometry(self,j,outfile, geometry):  
+        #figures out an index for iteration based on the iterator and the geometry
         if self.iterator == 'base' and geometry.label == 'base':
-            index = i
-            
+            index = j    
         else: 
             index = 0
+       
         #uses information about the iterator to make the index    
         openBlock = open(self.fileHandles[geometry.label][index])
         dataBlock = openBlock.read()
         openBlock.close()
         outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
         outfile.write(dataBlock)    
+
     
     #used in write3decfile
     def writeGeometryByMat(self, i, outfile):
@@ -59,14 +61,12 @@ class experiment():
         for geometry in self.geometries:
             keys = list(geometry.material.properties.keys())
             if 'edge' in keys:
-                #print('For iteration ' + str(i) + ' write this deformable geom first ' + geometry.label)
                 self.writeGeometry(i, outfile, geometry)
         
         #this writes geometry for any rigid materials        
         for geometry in self.geometries:
             keys = list(geometry.material.properties.keys())
             if 'edge' not in keys:
-                #print('For iteration ' + str(i) + ' write this rigid geom second ' + geometry.label)
                 self.writeGeometry(i, outfile, geometry)
     
     #used in write3decfile                
@@ -78,7 +78,16 @@ class experiment():
             self.fileHandles[geometry.label] = glob.glob(self.filePath + '*_' + geometry.label + '.3ddat')
             #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
 
-
+    def setupSimulationBase(self,j):
+        #self.numSimulations = len(self.fileHandles['base'])
+        self.runIndex = j
+        self.insertion = ''
+    
+    def setupSimulationLoad(self, j):
+        #self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
+        self.runIndex = 0
+        self.insertion = '_' + str(j*load_iterator)
+    
     def write3DECFile(self):        
         # first assign indices to unique materials
         for i in range(len(self.materials)):
@@ -89,47 +98,77 @@ class experiment():
         self.getFileHandles()
         
         if iterator == 'base':
-            numSimulations = len(self.fileHandles['base'])
-            for i in range (numSimulations):
-                #get file name
-                self.fileName = self.fileHandles['base'][i]
-                
-                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REDUNDANT TEXT BELOW, DOESNT WORK WHEN I CONDENSE IT INTO WRITEGEOMETRY
-                #removes filepath, base, and suffix from fileName
-                self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
-                writeFile = self.fileName + '.3ddat'
-                output = self.filePath + writeFile
-                #open the file and writing
-                outfile = open(output, 'w+')
-                outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-                outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
-                
-                #open the file and write the geometry
-                self.writeGeometryByMat(i, outfile)
-                
-                #write parameters in
-                
-            
-            
+            self.numSimulations = len(self.fileHandles['base'])        
         if iterator == 'load':
-            numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
-            for i in range(numSimulations):
-                self.fileName = self.fileHandles['base'][0]
-                
-                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REDUNDANT TEXT BELOW, DOESNT WORK WHEN I CONDENSE IT INTO WRITEGEOMETRY
-                #removes filepath, base, and suffix from fileName
-                self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
-                writeFile = self.fileName + '_' + str(i*load_iterator) + '.3ddat'
-                output = self.filePath + writeFile
-                #open the file and writing
-                outfile = open(output, 'w+')
-                outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-                outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
-                
-                #open the file and write the geometry
-                self.writeGeometryByMat(i, outfile)
+            self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
+            
+        print('this is num simulations' + str(self.numSimulations))
+        
+        
 
-                #write parameters in 
+        for j in range(self.numSimulations):
+            if iterator == 'base':
+                self.setupSimulationBase(j)            
+            if iterator == 'load':
+                self.setupSimulationLoad(j)
+            print (j)    
+            self.fileName = self.fileHandles['base'][self.runIndex]
+            self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+            writeFile = self.fileName + self.insertion +'.3ddat'
+            output = self.filePath + writeFile
+            #open the file and writing
+            outfile = open(output, 'w+')
+            outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
+            outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
+            
+            #open the file and write the geometry
+            self.writeGeometryByMat(j, outfile)
+
+            #write parameters in
+            
+#        #______________________________________
+#        if iterator == 'base':
+#            numSimulations = len(self.fileHandles['base'])
+#            for i in range (numSimulations):
+#                #get file name
+#                self.fileName = self.fileHandles['base'][i]
+#                
+#                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REDUNDANT TEXT BELOW, DOESNT WORK WHEN I CONDENSE IT INTO WRITEGEOMETRY
+#                #removes filepath, base, and suffix from fileName
+#                self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+#                writeFile = self.fileName + '.3ddat'
+#                output = self.filePath + writeFile
+#                #open the file and writing
+#                outfile = open(output, 'w+')
+#                outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
+#                outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
+#                
+#                #open the file and write the geometry
+#                self.writeGeometryByMat(i, outfile)
+#                
+#                #write parameters in
+#                
+#            
+#            
+#        if iterator == 'load':
+#            numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
+#            for i in range(numSimulations):
+#                self.fileName = self.fileHandles['base'][0]
+#                
+#                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REDUNDANT TEXT BELOW, DOESNT WORK WHEN I CONDENSE IT INTO WRITEGEOMETRY
+#                #removes filepath, base, and suffix from fileName
+#                self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+#                writeFile = self.fileName + '_' + str(i*load_iterator) + '.3ddat'
+#                output = self.filePath + writeFile
+#                #open the file and writing
+#                outfile = open(output, 'w+')
+#                outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
+#                outfile.write('new\n' + ';This is file ' + str(i) + '\n')  
+#                
+#                #open the file and write the geometry
+#                self.writeGeometryByMat(i, outfile)
+#
+#                #write parameters in 
 
 
 #============================================================
@@ -137,8 +176,8 @@ class experiment():
 # set up experiment
 filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'base' #can iterate over base or load !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IS THIS HARDCODING..?
-#if iterator = 'load' the following parameters need to be specified 
+iterator = 'base' #can iterate over base or load 
+#if iterator = 'base' the following parameters need to be specified 
 load_min = 0
 load_max = 1000
 load_iterator = 250 
@@ -147,11 +186,7 @@ my_experiment = experiment(filePath, outFileName, iterator, load_min, load_max, 
 # define materials
 mortar = material({'dens':2200, 'edge':True})
 stone = material({'dens':2400})
-fixedstone = material({'dens':2400,'fixity':'fix'}) #could not copy to work  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HOW SHOULD I GET FIXITY TO WORK, ITS DIFFERENT THAN OTHER PROPERTIES, NEEDS TO BE OWN LINE AND ONLY SAY "FIX"
-
-## create a copy of stone but add fixity
-#fixedStone = material(dict(stone.properties))
-#fixedStone['fixity'] = 'True'
+fixedstone = material({'dens':2400,'fixity':'fix'}) 
 
 # add geometries to experiment
 my_experiment.addGeometry('base', fixedstone)
