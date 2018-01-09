@@ -12,13 +12,14 @@ class material():
         for aProperty in self.properties:
             if aProperty == 'edge': 
                 propertyString += '\ngen edge ' + str(self.properties[aProperty]) 
-        propertyString += '\nprop mat INSERT NUMBER HERE'
+        propertyString += '\nprop mat ' + str(self.idx) #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         for aProperty in self.properties:
             if aProperty != 'edge' and aProperty != 'fixity' and aProperty != 'hide':
                 propertyString += ' %s %s '%(aProperty,self.properties[aProperty])
             if aProperty == 'fixity':
                 propertyString += '\nfix '
         return propertyString
+            
 
 class jointMaterial():
     #stores all metadata about a joint material
@@ -35,10 +36,10 @@ class jointMaterial():
 
 class geometry():
     # holds all the geometry data for a certain type of block
-    def __init__(self, label, material, jointMaterial):
+    def __init__(self, label, mat, jmat):
         self.label = label
-        self.material = material
-        self.jointMaterial = jointMaterial
+        self.material = mat
+        self.jointMaterial = jmat
 
 class experiment():
     # holds all the necessary objects to run an experiment
@@ -65,61 +66,75 @@ class experiment():
         if jmat not in self.jointMaterials:
             self.jointMaterials.append(jmat)
 
-    def writeParams(self, outfile, geometry):
-        print(geometry.label)
-        outfile.write('\n;--------------------------------%s PARAMETERS-----------------------------------\n'%geometry.label.upper())
-        #WILL NEED TO ADD PROP NUMBER IN HERE LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    def writeParams(self, outfile, geom):
+        outfile.write('\n;--------------------------------%s PARAMETERS-----------------------------------\n'%geom.label.upper())
         outfile.write('\n')
-        outfile.write(geometry.material.write())
-        #WILL NEED TO ADD JMAT NUMBER IN HERE LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        outfile.write(geom.material.write())
         outfile.write('\n')
-        outfile.write(geometry.jointMaterial.write())
+        outfile.write(geom.jointMaterial.write())
+        outfile.write('\ngroup range block ' + geom.label + '\nhide' )
 
     #used in writegeometrybymat
-    def writeGeometry(self,j,outfile, geometry):
+    def writeGeometry(self,j,outfile, geom):
         #figures out an index for iteration based on the iterator and the geometry
-        if self.iterator == 'base' and geometry.label == 'base':
+        if self.iterator == 'base' and geom.label == 'base':
             index = j
         else:
             index = 0
 
         #uses information about the iterator to make the index
-        openBlock = open(self.fileHandles[geometry.label][index])
+        openBlock = open(self.fileHandles[geom.label][index])
         dataBlock = openBlock.read()
         openBlock.close()
-        outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geometry.label.upper())
+        outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geom.label.upper())
         outfile.write(dataBlock)
 
     #used in write3decfile to write geometry for materials
-    def writeAllGeometries(self, i, outfile):
+    def writeGeomandParam(self, i, outfile):
         #this writes geometry for any deformable materials
-        for geometry in self.geometries:
-            keys = geometry.material.properties.keys()
-            #keys = list(geometry.material.properties.keys())
+        for geom in self.geometries:
+            keys = geom.material.properties.keys()
             if 'edge' in keys:
-                self.writeGeometry(i, outfile, geometry)
-                #make sure to add gen edge in here later... something like
-                #outfile.write('\n gen edge ' + str(geometry.materials['edge'])
-                self.writeParams(outfile, geometry)
+                self.writeGeometry(i, outfile, geom)
+                self.writeParams(outfile, geom)
 
         #this writes geometry for any rigid materials
-        for geometry in self.geometries:
-            #keys = list(geometry.material.properties.keys())
-            keys = geometry.material.properties.keys()
+        for geom in self.geometries:
+            keys = geom.material.properties.keys()
             if 'edge' not in keys:
-                self.writeGeometry(i, outfile, geometry)
-                self.writeParams(outfile, geometry)
-
-#        for geometry in self.geometries:
-#            self.writeParams(outfile, geometry)
+                self.writeGeometry(i, outfile, geom)
+                self.writeParams(outfile, geom)
+   
+    #this function is called by write3decfile to assign material properties
+    def assignMat(self, outfile):
+        outfile.write('\n;--------------------------------ASSIGN MATERIALS-----------------------------------\n')  
+        outfile.write('\nhide')
+        for geom in self.geometries:
+            outfile.write('\nshow range group ' + geom.label)
+            outfile.write('\nchange mat ' + str(geom.material.idx))
+            outfile.write('\nchange jmat ' + str(geom.jointMaterial.jidx))
+            outfile.write('\nhide')
+        outfile.write('\nshow')
+            
+    #this function is called by write3decfile to hide blocks that need to be hidden
+    def hideBlocks(self, outfile):
+        for geom in self.geometries:
+            keys = geom.material.properties.keys()
+            if 'hide' in keys:
+                outfile.write('\n\n;--------------------------------HIDING SELECTED BLOCKS------------------------------------')
+                outfile.write('\nhide range group ' + geom.label)
+    
+    #this function is called by write3decfile to write all the functions and their calls
+    #def writeFunctions(self, outfile):
+                        
 
     #used in write3decfile to grab all of the pertinent files
     def getFileHandles(self):
         self.fileHandles = {}
         #gets all the fileHandles
-        for geometry in self.geometries:
-            self.fileHandles[geometry.label] = glob.glob(self.filePath + '*_' + geometry.label + '.3ddat')
-            #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
+        for geom in self.geometries:
+            self.fileHandles[geom.label] = glob.glob(self.filePath + '*_' + geom.label + '.3ddat')
+            #SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
 
     #used in write3dec file to change index and insertion for filename based on iterator
     def setupSimulationBase(self,j):
@@ -137,9 +152,10 @@ class experiment():
     def write3DECFile(self):
         # first assign indices to unique materials
         for i in range(len(self.materials)):
-            self.materials[i].idx = i
+            self.materials[i].idx = i + 1
+            print('idx = ' + str(self.materials[i].idx))
         for k in range(len(self.jointMaterials)):
-            self.jointMaterials[k].jidx = k
+            self.jointMaterials[k].jidx = k + 1
 
         # next we need to get a list of the files so we can call them for writing
         # so lets make a list called fileHandles, we can do that in a different function above
@@ -152,7 +168,7 @@ class experiment():
         else:
             print('Iterator must be either base or load')
 
-        print('this is num simulations ' + str(self.numSimulations))
+        #print('this is num simulations ' + str(self.numSimulations))
 
         for j in range(self.numSimulations):
             print ('This is iteration number ' + str(j))
@@ -169,8 +185,21 @@ class experiment():
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
             outfile.write('new\n' + ';This is file ' + str(i) + '\n')
 
-            #open the file and write the geometry
-            self.writeAllGeometries(j, outfile)
+            #open the file and write the geometry and parameters
+            self.writeGeomandParam(j, outfile)
+            
+            #assign material properties
+            self.assignMat(outfile)
+            
+            
+            #when last geom and param are written, make sure to hide the blocks that need to be hidden
+            self.hideBlocks(outfile)
+            
+
+            
+            #write the functions that can be called
+            
+            #write the funciton calls
 
 #============================================================
 
@@ -182,10 +211,11 @@ iterator = 'load' #can iterate over base or load
 load_min = 0
 load_max = 1000
 load_iterator = 250
+
 my_experiment = experiment(filePath, outFileName, iterator, load_min, load_max, load_iterator)
 
 # define materials(dens, edge, fixity, hide, ymod)
-mortar = material({'dens':2200, 'edge':100})
+mortar = material({'dens':2200, 'edge':100, 'hide':True})
 stone = material({'dens':2400})
 fixedstone = material({'dens':2400,'fixity':'fix'})
 
