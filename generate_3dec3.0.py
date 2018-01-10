@@ -43,13 +43,15 @@ class geometry():
 
 class experiment():
     # holds all the necessary objects to run an experiment
-    def __init__(self, filePath, outFileName, iterator, load_min = 0, load_max = 0, load_iterator = 0):
+    def __init__(self, filePath, functionPath, outFileName, iterator, functionHandles, load_min = 0, load_max = 0, load_iterator = 0):
         self.filePath = filePath
+        self.functionPath = functionPath
         self.geometries = []
         self.materials = []
         self.jointMaterials = []
         self.outFileName = outFileName
         self.iterator = iterator
+        self.functionHandles = functionHandles
         self.load_min = load_min
         self.load_max = load_max
         self.load_iterator = load_iterator
@@ -125,8 +127,18 @@ class experiment():
                 outfile.write('\nhide range group ' + geom.label)
     
     #this function is called by write3decfile to write all the functions and their calls
-    #def writeFunctions(self, outfile):
-                        
+    def writeFunctions(self, outfile):
+        functionCall = '\n'
+        outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
+        for function in self.functionHandles:
+            functionFull = functionPath + function
+            openFunction = open(functionFull, 'r')
+            dataFunction = openFunction.read()
+            openFunction.close()
+            outfile.write(dataFunction)   
+            functionCall += '@' + function.replace('.txt','') + '\n'
+            
+        outfile.write(functionCall)
 
     #used in write3decfile to grab all of the pertinent files
     def getFileHandles(self):
@@ -138,15 +150,13 @@ class experiment():
 
     #used in write3dec file to change index and insertion for filename based on iterator
     def setupSimulationBase(self,j):
-        #self.numSimulations = len(self.fileHandles['base'])
         self.runIndex = j
         self.insertion = ''
 
     #used in write3dec file to change index and insertion for filename based on iterator
     def setupSimulationLoad(self, j):
-        #self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
         self.runIndex = 0
-        self.insertion = '_' + str(j*load_iterator)
+        self.insertion = '_' + str(j*self.load_iterator)
 
     #main function
     def write3DECFile(self):
@@ -164,11 +174,10 @@ class experiment():
         if iterator == 'base':
             self.numSimulations = len(self.fileHandles['base'])
         elif iterator == 'load':
+            print(self.load_iterator)
             self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
         else:
             print('Iterator must be either base or load')
-
-        #print('this is num simulations ' + str(self.numSimulations))
 
         for j in range(self.numSimulations):
             print ('This is iteration number ' + str(j))
@@ -191,36 +200,37 @@ class experiment():
             #assign material properties
             self.assignMat(outfile)
             
-            
             #when last geom and param are written, make sure to hide the blocks that need to be hidden
             self.hideBlocks(outfile)
-            
-
-            
+                        
             #write the functions that can be called
-            
-            #write the funciton calls
+            self.writeFunctions(outfile)
+
+            outfile.close()
+
 
 #============================================================
 
 # set up experiment
 filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
+functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
 iterator = 'load' #can iterate over base or load
 #if iterator = 'load' the following parameters need to be specified
-load_min = 0
-load_max = 1000
-load_iterator = 250
 
-my_experiment = experiment(filePath, outFileName, iterator, load_min, load_max, load_iterator)
+
+# define functions
+functionHandles = ['getstress.txt', 'cycloop.txt']
+
+my_experiment = experiment(filePath, functionPath, outFileName, iterator, functionHandles, load_min = 0., load_max = 1000., load_iterator = 250.)
 
 # define materials(dens, edge, fixity, hide, ymod)
-mortar = material({'dens':2200, 'edge':100, 'hide':True})
-stone = material({'dens':2400})
-fixedstone = material({'dens':2400,'fixity':'fix'})
+mortar = material({'dens':2200., 'edge':100., 'hide':True})
+stone = material({'dens':2400.})
+fixedstone = material({'dens':2400.,'fixity':'fix'})
 
 # define joint materials
-mortar_stone = jointMaterial({'jkn':1e9, 'jks':1e9, 'jfric': 37})
+mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37.})
 
 # add geometries to experiment
 my_experiment.addGeometry('base', fixedstone, mortar_stone)
