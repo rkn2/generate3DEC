@@ -138,6 +138,14 @@ class experiment():
             outfile.write(dataFunction)   
             functionCall += '@' + function.replace('.txt','') + '\n'
             
+        setupFull = functionPath + 'SETUP_setup.txt'    
+        openSetup = open(setupFull, 'r')
+        dataSetup = openSetup.read()
+        openSetup.close()
+        outfile.write('\n;--------------------------------SETUP------------------------------------\n')
+        outfile.write('\n' + dataSetup)
+        outfile.write('\n;--------------------------------FUNCTION CALLS------------------------------------\n')
+        outfile.write('\n@setup')
         outfile.write(functionCall)
 
     #used in write3decfile to grab all of the pertinent files
