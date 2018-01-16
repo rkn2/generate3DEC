@@ -1,4 +1,4 @@
-def final_vertex
+def getFinalVert
 	bi = block_head
 	m = 1
 	loop while bi # 0

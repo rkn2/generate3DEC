@@ -1,4 +1,4 @@
-def initial_vertex
+def getInitVert
 	bi = block_head
 	m = 1
 	loop while bi # 0

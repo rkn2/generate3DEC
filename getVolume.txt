@@ -1,4 +1,4 @@
-def getvol ;PRINT OUT VOLUME OF BLOCKS
+def getVolume ;PRINT OUT VOLUME OF BLOCKS
 	local bi = block_head
 	m = 1
 	loop while bi # 0 

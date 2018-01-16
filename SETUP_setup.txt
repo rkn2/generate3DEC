@@ -3,10 +3,18 @@ def setup ; SETUP KEY VARIABLES
 	IO_WRITE = 1
 	IO_FISH = 0
 	IO_ASCII = 1
-	path = 'INSERT PATH HERE'
-	run_name = 'INSERT RUN NAME HERE'
-	movieInterval = INSERT MOVIE INTERVAL HERE
-	;info_suffix = '_info.dat'
+
+	path = 'insertpath\'
+	runName = 'insertrunName'
+	movieInterval = insertmovieInterval
+	dampBool = insertdampBool
+	faceTriBool = insertfaceTriBool	
+	numCycLoops = insertnumCycLoops
+	numCycles = insertnumCycles
+	solveRatio = insertsolveRatio
+	arraySize = insertarraySize
+	threshold = insertthreshold
+		
 	initialCentroid_suffix = '_iniCent.dat'	
 	finalCentroid_suffix = '_finalCent.dat'
 	vol_suffix = '_vol.dat'

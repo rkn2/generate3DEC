@@ -1,4 +1,4 @@
-def displacement ;PRINT OUT FINAL DISPLACEMENTS OF BLOCKS
+def getDisplacement ;PRINT OUT FINAL DISPLACEMENTS OF BLOCKS
 	local bi = block_head
     	m = 1
     	loop while bi # 0

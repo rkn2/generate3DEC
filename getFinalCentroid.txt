@@ -1,4 +1,4 @@
-def final_centroid ;MAKE NOTE OF FINAL LOCATION OF BLOCKS
+def getFinalCentroid ;MAKE NOTE OF FINAL LOCATION OF BLOCKS
     local bi = block_head
     m = 1
     loop while bi # 0

@@ -1,4 +1,4 @@
-def neighbors
+def getNeighbors
 	ci = contact_head
 	m = 1
     loop while ci # 0
