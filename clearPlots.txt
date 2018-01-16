@@ -1,0 +1,21 @@
+def clearPlots
+	command
+		plot destroy plot dispM
+		;plot clear
+		plot destroy plot xDisp
+		;plot clear
+		plot destroy plot yDisp
+		;plot clear
+		plot destroy plot zDisp
+		;plot clear
+		plot destroy plot maxpStress
+		;plot clear
+		plot destroy plot minpStress
+		;plot clear
+		plot destroy plot jNormalDisp
+		;plot clear
+		plot destroy plot jNormalStress
+		;plot clear
+
+	endcommand
+end
