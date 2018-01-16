@@ -262,7 +262,7 @@ class experiment():
         return(funcCall)
     
     #this function is called by writeFunctions to generate the setup function
-    def setupFunction(self, outfile):
+    def setupFunction(self, outfile, writeFile):
         #defining setup variables
         overwrites = {'movieInterval' : self.movieInterval, 'dampBool': self.dampBool, 'faceTriBool' : self.faceTriBool, 
                       'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
@@ -276,16 +276,16 @@ class experiment():
         for overwrite in overwrites:
             insertString = 'insert' + overwrite
             dataSetup = re.sub(insertString, str(overwrites[overwrite]), dataSetup)
-        #filePath = self.filePath
-        #filePath = re.sub("\\", replace, filePath)
-        #print(filePath)
-        #dataSetup = re.sub(r'\binsertpath\b',filePath, dataSetup)
-        #dataSetup = re.sub('insertrunName', self.fileName, dataSetup)
+        filePath = self.filePath
+        dataSetup = re.sub(r'\binsertpath\b',filePath, dataSetup)
+        writeFile = writeFile.replace(filePath[:-1],'').replace('.3ddat','')[1:]
+        dataSetup = re.sub('insertrunName', writeFile, dataSetup)
+        
         #dont forget to do saveCyc = 'cycstate' + fileName
         outfile.write('\n' + dataSetup)
     
     #this function is called by write3decfile to write all the functions and their calls
-    def writeFunctions(self, outfile):
+    def writeFunctions(self, outfile, writeFile):
      
         outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
         
@@ -306,7 +306,7 @@ class experiment():
             outfile.write('\n')
             outfile.write(dataFunction)   
 
-        self.setupFunction(outfile)
+        self.setupFunction(outfile, writeFile)
         
         if self.movieHandles != []:
             self.writeClearPlots(outfile)
@@ -321,11 +321,11 @@ class experiment():
         #join all the files together for one massive three dec script
         openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
         for file in filesToJoin:
-            with open(self.filePath + file) as infile:
+            #with open(self.filePath + file) as infile: #@@@@@@@@@@@@@@@@@@@@@@@
+            with open(file) as infile:
                 for line in infile:
                     openOutput.write(line)
         openOutput.close()
-        print('files are joined')
     #used in write3decfile to grab all of the pertinent files
     def getFileHandles(self):
         self.fileHandles = {}
@@ -344,7 +344,7 @@ class experiment():
         self.runIndex = 0
         self.insertion = '_' + str(j*self.load_iterator)
 
-    #main function
+    #MAIN FUNCTION
     def write3DECFile(self):
         # first assign indices to unique materials
         for i in range(len(self.materials)):
@@ -375,7 +375,8 @@ class experiment():
             fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
             writeFile = fileName + self.insertion +'.3ddat'
             filesToJoin.append(writeFile)
-            output = self.filePath + writeFile
+            output = writeFile
+            #output = self.filePath + writeFile #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             #open the file and writing
             outfile = open(output, 'w+')
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
@@ -393,7 +394,7 @@ class experiment():
             self.loadBlocks(outfile)
             
             #write the functions that can be called
-            self.writeFunctions(outfile)
+            self.writeFunctions(outfile, writeFile)
             
             outfile.close()
             
@@ -406,7 +407,7 @@ class experiment():
 #============================================================
 #INPUT SCRIPT
 # set up experiment
-filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
+filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" #@@@@@@@@@@@@@@@@@@@@@
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
 iterator = 'load' #can iterate over base or load
