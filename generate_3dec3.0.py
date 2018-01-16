@@ -1,3 +1,8 @@
+# currently this makes simulation suites where the simulations are comprised of 
+#1) different loads to the same area
+#2) different bases to simulate settlement
+# currently this 
+
 import re
 import glob
 
@@ -30,7 +35,7 @@ class jointMaterial():
 
     def write(self):
         # write joint properties to string;
-        jPropertyString = '\nprop jmat INSERT NUMBER HERE'
+        jPropertyString = '\nprop jmat ' + str(self.jidx)
         for jointProperty in self.jointProperties:
             jPropertyString += ' %s %s '%(jointProperty,self.jointProperties[jointProperty])
         return jPropertyString
@@ -44,8 +49,9 @@ class geometry():
 
 class experiment():
     # holds all the necessary objects to run an experiment
-    def __init__(self, filePath, functionPath, outFileName, iterator, functionHandles, movieHandles, plots, load_min = 0, load_max = 0, load_iterator = 0, 
-                 movieInterval = 0, dampBool = None, faceTriBool = None, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0):
+    def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, load_max = 0, load_iterator = 0, 
+                 movieInterval = 0, dampBool = None, faceTriBool = None, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0,
+                 boundLoad = 0, loadLocation = None, loadOrientation = None):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -53,6 +59,7 @@ class experiment():
         self.jointMaterials = []
         self.outFileName = outFileName
         self.iterator = iterator
+        self.cycChoice = cycChoice
         self.functionHandles = functionHandles
         self.movieHandles = movieHandles
         self.plots = plots
@@ -67,6 +74,10 @@ class experiment():
         self.solveRatio = solveRatio
         self.arraySize = arraySize
         self.threshold = threshold
+        self.boundLoad = boundLoad
+        self.loadLocation = loadLocation
+        self.loadOrientation = loadOrientation
+        
 
     # used to bring inputs into specific formats
     def addGeometry(self, label, mat, jmat):
@@ -138,6 +149,18 @@ class experiment():
                 outfile.write('\n\n;--------------------------------HIDING SELECTED BLOCKS------------------------------------')
                 outfile.write('\nhide range group ' + geom.label)
     
+    #this function is called by write3decfile to load blocks
+    def loadBlocks(self, outfile):
+        if self.boundLoad != 0 and self.loadLocation != None:
+            outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
+            if len(self.boundLoad) != len(self.loadLocation):
+                print('Differnet number of loads and positions')
+            numberLoads = len(self.boundLoad)
+            loadIndex = 0
+            while loadIndex < numberLoads:
+                outfile.write('\nbound ' + str(self.loadOrientation[loadIndex]) + 'load ' + str(self.boundLoad[loadIndex]) +' range ' + str(self.loadLocation[loadIndex]))
+                loadIndex += 1
+    
     #This is used in write functions
     def writemakeMoviePlots(self, outfile):
         moviePlotsOpen = open(self.filePath + 'makeMoviePlots.txt', 'w+')
@@ -184,7 +207,7 @@ class experiment():
         crackPlotFile.close()
         outfile.write(crackPlotText)    
         
-        
+    #called in writefunctions    
     def writeMovieFunctions(self,outfile):
         #make sure you write the individual functions like makeMoviePlots, makeCrackPlots, clearPlots, plotCrackPlots
         if 'makeMoviePlots' in self.movieHandles:
@@ -194,7 +217,7 @@ class experiment():
         if 'makeCrackPlots' in self.movieHandles:
             self.writemakeCrackPlots(outfile)
         
-        
+    #called in writefunctions    
     def writeClearPlots(self, outfile):
         clearPlotsOpen = open(self.filePath + 'clearPlots.txt', 'w+')
         clearPlotsOpen.write('\n;this is a function that destroys all plots')
@@ -211,46 +234,26 @@ class experiment():
         clearPlotsText = clearPlotsFile.read()
         clearPlotsFile.close()
         outfile.write(clearPlotsText)
-        
+    
+    #called in writefunctions    
     def writeFuncCall(self,outfile):
         funcList = []
         funcList.append('setup')
         funcList.append('clearPlots')
-        funcList.append('cycloop')
+        funcList.append('cycLoop')
         for eachHandle in self.functionHandles:
             funcList.append(eachHandle)
         for eachHandle in self.movieHandles:
             funcList.append(eachHandle)
+            
+        orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio',
+                       'cycLoop', 'getStress', 'getDisplacement', 'getFinalCentroid', 'getFinalVert', 'getCracks', 'makeCrackPlots', 'clearPlots']    
+
         funcDict = {}
         for entry in funcList:
-            if entry == 'setup':
-                funcDict['setup'] = 0
-            if entry == 'getVolume':
-                funcDict['getVolume'] = 1
-            if entry == 'getInitCentroid':
-                funcDict['getInitCentroid'] = 2
-            if entry == 'getInitVert':
-                funcDict['getInitVert'] = 3
-            if entry == 'getNeighbors':
-                funcDict['getNeighbors'] = 4
-            if entry == 'makeMoviePlots':
-                funcDict['makeMoviePlots'] =5
-            if entry == 'cycloop':
-                funcDict['cycloop'] = 6
-            if entry == 'getStress':
-                funcDict['getStress'] =7
-            if entry == 'getDisplacement':
-                funcDict['getDisplacement'] = 8
-            if entry == 'getFinalCentroid':
-                funcDict['getFinalCentroid'] = 9
-            if entry == 'getFinalVert':
-                funcDict['getFinalVert'] = 10
-            if entry == 'getCracks':
-                funcDict['getCracks'] = 11
-            if entry == 'makeCrackPlot':
-                funcDict['makeCrackPlot'] = 12
-            if entry == 'clearPlots':
-                funcDict['clearPlots'] = 13
+            value = orderedList.index(entry)
+            funcDict[entry] = value
+            
         funcCall = []
         results = sorted(funcDict.items(), key = lambda x: x[1])
         for entry in results:
@@ -258,24 +261,8 @@ class experiment():
             funcCall.append(entryString)
         return(funcCall)
     
-    #this function is called by write3decfile to write all the functions and their calls
-    def writeFunctions(self, outfile):
-     
-        #!functionCall = '\n'
-        outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
-        
-        self.writeMovieFunctions(outfile)
-       
-        for function in self.functionHandles:
-            functionFull = functionPath + function + '.txt'
-            openFunction = open(functionFull, 'r')
-            dataFunction = openFunction.read()
-            openFunction.close()
-            outfile.write('\n')
-            outfile.write(dataFunction)   
-            #!functionCall += '@' + function + '\n'
-            #function = function.replace('.txt', '') 
-            #functionList[function] = keyNumber
+    #this function is called by writeFunctions to generate the setup function
+    def setupFunction(self, outfile):
         #defining setup variables
         overwrites = {'movieInterval' : self.movieInterval, 'dampBool': self.dampBool, 'faceTriBool' : self.faceTriBool, 
                       'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
@@ -286,7 +273,6 @@ class experiment():
         dataSetup = openSetup.read()
         openSetup.close()
         outfile.write('\n;--------------------------------SETUP------------------------------------\n')
-        #WORKING HERE!!!!!!!!!!!!!!!!!!!!!!!!!
         for overwrite in overwrites:
             insertString = 'insert' + overwrite
             dataSetup = re.sub(insertString, str(overwrites[overwrite]), dataSetup)
@@ -297,6 +283,31 @@ class experiment():
         #dataSetup = re.sub('insertrunName', self.fileName, dataSetup)
         #dont forget to do saveCyc = 'cycstate' + fileName
         outfile.write('\n' + dataSetup)
+    
+    #this function is called by write3decfile to write all the functions and their calls
+    def writeFunctions(self, outfile):
+     
+        outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
+        
+        self.writeMovieFunctions(outfile)
+        #add in function for cycle
+        if self.cycChoice == 'ratio':
+            self.functionHandles.append('cycRatio')
+            
+        if self.cycChoice == 'loop':
+            self.functionHandles.append('cycLoop')
+        
+        #loop through all functions in function handles and write them in.             
+        for function in self.functionHandles:
+            functionFull = functionPath + function + '.txt'
+            openFunction = open(functionFull, 'r')
+            dataFunction = openFunction.read()
+            openFunction.close()
+            outfile.write('\n')
+            outfile.write(dataFunction)   
+
+        self.setupFunction(outfile)
+        
         if self.movieHandles != []:
             self.writeClearPlots(outfile)
         outfile.write('\n;--------------------------------FUNCTION CALLS------------------------------------\n')
@@ -378,6 +389,9 @@ class experiment():
             #when last geom and param are written, make sure to hide the blocks that need to be hidden
             self.hideBlocks(outfile)
                         
+            #loading is applied
+            self.loadBlocks(outfile)
+            
             #write the functions that can be called
             self.writeFunctions(outfile)
             
@@ -396,13 +410,15 @@ filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
 iterator = 'load' #can iterate over base or load
+cycChoice = 'loop' #can be ratio or loops
 
 #______________________________________________________________
 
 # define functions and movies
 #options = getDisplacement, getStres, getCracks, getFinalCentroid, getVolume, getInitCentroid,
 #           getInitVert, getFinalVert, getNeighbors
-functionHandles = ['getstress', 'cycloop', 'getCracks']
+# cycle choice is either cycloop or cycratio
+functionHandles = ['getStress', 'getCracks']
 
 #options = 'makeMoviePlots', 'makeCrackPlots'
 movieHandles = ['makeMoviePlots', 'makeCrackPlots']
@@ -420,11 +436,13 @@ fixedstone = material({'dens':2400.,'fixity':'fix'})
 
 #______________________________________________________________
 
-# pass input variables   
+# pass input variables 
+#for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of all the variables that can be included
-my_experiment = experiment(filePath, functionPath, outFileName, iterator, functionHandles, movieHandles, plots, load_min = 0., 
+my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0., 
                            load_max = 1000., load_iterator = 250., movieInterval = 1000., dampBool = True, faceTriBool = True, 
-                           numCycLoops = 10., numCycles = 1000., solveRatio = 5., arraySize = 30000., threshold = 0.001)
+                           numCycLoops = 10., numCycles = 1000., solveRatio = 5., arraySize = 30000., threshold = 0.001,
+                           boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
 
 # define joint materials
 mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37.})
