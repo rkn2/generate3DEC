@@ -188,12 +188,10 @@ class experiment():
     def writeMovieFunctions(self,outfile):
         #make sure you write the individual functions like makeMoviePlots, makeCrackPlots, clearPlots, plotCrackPlots
         if 'makeMoviePlots' in self.movieHandles:
-            print('makemovieplots is here')
             self.writemakeMoviePlots(outfile)
             
         #add other specialty functions
         if 'makeCrackPlots' in self.movieHandles:
-            print('makecrackplots is here')
             self.writemakeCrackPlots(outfile)
         
         
@@ -213,12 +211,57 @@ class experiment():
         clearPlotsText = clearPlotsFile.read()
         clearPlotsFile.close()
         outfile.write(clearPlotsText)
+        
+    def writeFuncCall(self,outfile):
+        funcList = []
+        funcList.append('setup')
+        funcList.append('clearPlots')
+        funcList.append('cycloop')
+        for eachHandle in self.functionHandles:
+            funcList.append(eachHandle)
+        for eachHandle in self.movieHandles:
+            funcList.append(eachHandle)
+        funcDict = {}
+        for entry in funcList:
+            if entry == 'setup':
+                funcDict['setup'] = 0
+            if entry == 'getVolume':
+                funcDict['getVolume'] = 1
+            if entry == 'getInitCentroid':
+                funcDict['getInitCentroid'] = 2
+            if entry == 'getInitVert':
+                funcDict['getInitVert'] = 3
+            if entry == 'getNeighbors':
+                funcDict['getNeighbors'] = 4
+            if entry == 'makeMoviePlots':
+                funcDict['makeMoviePlots'] =5
+            if entry == 'cycloop':
+                funcDict['cycloop'] = 6
+            if entry == 'getStress':
+                funcDict['getStress'] =7
+            if entry == 'getDisplacement':
+                funcDict['getDisplacement'] = 8
+            if entry == 'getFinalCentroid':
+                funcDict['getFinalCentroid'] = 9
+            if entry == 'getFinalVert':
+                funcDict['getFinalVert'] = 10
+            if entry == 'getCracks':
+                funcDict['getCracks'] = 11
+            if entry == 'makeCrackPlot':
+                funcDict['makeCrackPlot'] = 12
+            if entry == 'clearPlots':
+                funcDict['clearPlots'] = 13
+        funcCall = []
+        results = sorted(funcDict.items(), key = lambda x: x[1])
+        for entry in results:
+            entryString = '\n@' + entry[0]
+            funcCall.append(entryString)
+        return(funcCall)
     
     #this function is called by write3decfile to write all the functions and their calls
     def writeFunctions(self, outfile):
      
-        functionCall = '\n'
-        #functionList = {}
+        #!functionCall = '\n'
         outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
         
         self.writeMovieFunctions(outfile)
@@ -230,7 +273,7 @@ class experiment():
             openFunction.close()
             outfile.write('\n')
             outfile.write(dataFunction)   
-            functionCall += '@' + function + '\n'
+            #!functionCall += '@' + function + '\n'
             #function = function.replace('.txt', '') 
             #functionList[function] = keyNumber
         #defining setup variables
@@ -257,12 +300,21 @@ class experiment():
         if self.movieHandles != []:
             self.writeClearPlots(outfile)
         outfile.write('\n;--------------------------------FUNCTION CALLS------------------------------------\n')
-        outfile.write('\n@setup')
-        outfile.write(functionCall)
-        if self.movieHandles != []:
-            outfile.write('\n@clearPlots')
-        
-        
+        self.writeFuncCall(outfile)
+        funcCall = self.writeFuncCall(outfile)
+        for eachEntry in funcCall:
+            outfile.write(eachEntry)
+
+    #join all the files
+    def joinFiles(self, filesToJoin):
+        #join all the files together for one massive three dec script
+        openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
+        for file in filesToJoin:
+            with open(self.filePath + file) as infile:
+                for line in infile:
+                    openOutput.write(line)
+        openOutput.close()
+        print('files are joined')
     #used in write3decfile to grab all of the pertinent files
     def getFileHandles(self):
         self.fileHandles = {}
@@ -299,16 +351,19 @@ class experiment():
             self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
         else:
             print('Iterator must be either base or load')
-
+        
+        filesToJoin = []
+        
         for j in range(self.numSimulations):
             print ('This is iteration number ' + str(j))
             if iterator == 'base':
                 self.setupSimulationBase(j)
             if iterator == 'load':
                 self.setupSimulationLoad(j)
-            self.fileName = self.fileHandles['base'][self.runIndex]
-            self.fileName = self.fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
-            writeFile = self.fileName + self.insertion +'.3ddat'
+            fileName = self.fileHandles['base'][self.runIndex]
+            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+            writeFile = fileName + self.insertion +'.3ddat'
+            filesToJoin.append(writeFile)
             output = self.filePath + writeFile
             #open the file and writing
             outfile = open(output, 'w+')
@@ -326,25 +381,29 @@ class experiment():
             #write the functions that can be called
             self.writeFunctions(outfile)
             
-            #write the moviefunctions
-            
-            
             outfile.close()
+            
+        #join all the files together
+        self.joinFiles(filesToJoin)
+        #print(filesToJoin)
 
+        
 
 #============================================================
-
+#INPUT SCRIPT
 # set up experiment
 filePath= 'C:\\Users\\Rebecca Napolitano\\Documents\\datafiles\\test\\'
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
 iterator = 'load' #can iterate over base or load
-#if iterator = 'load' the following parameters need to be specified
+
+#______________________________________________________________
 
 # define functions and movies
 #options = getDisplacement, getStres, getCracks, getFinalCentroid, getVolume, getInitCentroid,
 #           getInitVert, getFinalVert, getNeighbors
 functionHandles = ['getstress', 'cycloop', 'getCracks']
+
 #options = 'makeMoviePlots', 'makeCrackPlots'
 movieHandles = ['makeMoviePlots', 'makeCrackPlots']
 
@@ -352,10 +411,14 @@ movieHandles = ['makeMoviePlots', 'makeCrackPlots']
 #options: displacement, xdisplacement, ydisplacement, zdisplacement, smaximum, sminimum
 plots = ['displacement', 'smaximum']
 
+#______________________________________________________________
+
 # define materials(dens, edge, fixity, hide, ymod)
 mortar = material({'dens':2200., 'edge':100., 'hide':True})
 stone = material({'dens':2400.})
 fixedstone = material({'dens':2400.,'fixity':'fix'})
+
+#______________________________________________________________
 
 # pass input variables   
 #sample of all the variables that can be included
@@ -365,6 +428,8 @@ my_experiment = experiment(filePath, functionPath, outFileName, iterator, functi
 
 # define joint materials
 mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37.})
+
+#______________________________________________________________
 
 # add geometries to experiment
 my_experiment.addGeometry('base', fixedstone, mortar_stone)
