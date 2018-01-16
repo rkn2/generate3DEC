@@ -1,0 +1,35 @@
+def cycRatio
+	rat = float('1e-0')
+	i = 0
+	command
+		damp local
+		facetri rad8
+	endcommand
+	loop while i < solveRatio
+		i_string = string(i)
+		rat = rat / 2
+		saveFile = "saveCyc" + "_" +string(i)
+		dispMFile = saveFile + 'dispM'+ string(".png")
+		dispxFile = saveFile + 'xdisp'+ string(".png")
+		dispyFile = saveFile + 'ydisp'+ string(".png")
+		dispzFile = saveFile + 'zdisp'+ string(".png")
+		minpStressFile = saveFile + 'minpStress'+ string(".png")
+		maxpStressFile = saveFile + 'maxpStress'+ string(".png")
+
+		command
+			;hist time
+			;hist unbal
+			;cyc 1
+			;plot hist 2 v 1
+			solve ratio @rat cyc 10000
+			save saveCyc
+			plot bitmap plot dispM filename @dispMFile
+			plot bitmap plot xdisp filename @dispxFile
+			plot bitmap plot ydisp filename @dispyFile
+			plot bitmap plot zdisp filename @dispzFile
+			plot bitmap plot minpStress filename @minpStressFile
+			plot bitmap plot maxpStress filename @maxpStressFile
+		endcommand	
+		i = i + 1
+	end_loop
+end
