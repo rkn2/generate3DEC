@@ -1,3 +1,4 @@
+import re
 import glob
 
 class material():
@@ -43,7 +44,8 @@ class geometry():
 
 class experiment():
     # holds all the necessary objects to run an experiment
-    def __init__(self, filePath, functionPath, outFileName, iterator, functionHandles, load_min = 0, load_max = 0, load_iterator = 0):
+    def __init__(self, filePath, functionPath, outFileName, iterator, functionHandles, movieHandles, plots, load_min = 0, load_max = 0, load_iterator = 0, 
+                 movieInterval = 0, dampBool = None, faceTriBool = None, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -52,9 +54,19 @@ class experiment():
         self.outFileName = outFileName
         self.iterator = iterator
         self.functionHandles = functionHandles
+        self.movieHandles = movieHandles
+        self.plots = plots
         self.load_min = load_min
         self.load_max = load_max
         self.load_iterator = load_iterator
+        self.movieInterval = movieInterval
+        self.dampBool = dampBool
+        self.faceTriBool = faceTriBool
+        self.numCycLoops = numCycLoops
+        self.numCycles = numCycles
+        self.solveRatio = solveRatio
+        self.arraySize = arraySize
+        self.threshold = threshold
 
     # used to bring inputs into specific formats
     def addGeometry(self, label, mat, jmat):
@@ -126,28 +138,131 @@ class experiment():
                 outfile.write('\n\n;--------------------------------HIDING SELECTED BLOCKS------------------------------------')
                 outfile.write('\nhide range group ' + geom.label)
     
+    #This is used in write functions
+    def writemakeMoviePlots(self, outfile):
+        moviePlotsOpen = open(self.filePath + 'makeMoviePlots.txt', 'w+')
+        moviePlotsOpen.write('\n;This is a function to create movie plots.')
+        moviePlotsOpen.write('\ndef makeMoviePlots \n\tcommand ')
+        #takes the place of movie_setup_func
+        moviePlotsOpen.write('\n\t\tplot set movieactive false \n\t\tplotset movieprefix @runName' + 
+                             '\n\t\tplot set moviein @movieInterval \n\t\tplot set index 1' + 
+                             '\n\t\tplot set movieactive true')
+        
+        #takes the place of makemovieplots       
+        for plotName in plots: 
+            if plotName == 'displacement' or plotName == 'xdisplacement' or plotName == 'ydisplacement' or plotName == 'zdisplacement':
+                specifier = 'contour '
+            if plotName == 'smaximum' or plotName == 'sminimum':
+                specifier = 'blockcontour '                
+            moviePlotsOpen.write('\n\t\tplot create \n\t\tplot rename ' + plotName + 
+                                 '\n\t\tplot clear \n\t\tplot add ' + specifier + plotName)
+        moviePlotsOpen.write('\n\tendcomand \nend')
+        moviePlotsOpen.close()
+        moviePlotFile = open(self.filePath + 'makeMoviePlots.txt', 'r')
+        moviePlotText = moviePlotFile.read()
+        moviePlotFile.close()
+        outfile.write(moviePlotText)            
+        
+    def writemakeCrackPlots(self, outfile):
+        crackPlotsOpen = open(self.filePath + 'makeCrackPlots.txt', 'w+')
+        crackPlotsOpen.write('\n;This is a function to create crack plots.')
+        crackPlotsOpen.write('\ndef makeCrackPlots \n\tcommand ')
+        crackPlots = ['ndisplacement', 'nstress']
+        for crackPlot in crackPlots:
+            #rewrite as if statement if you ever have any other specifiers
+            specifier = 'jointcontour '
+            crackPlotsOpen.write('\n\t\tplot create \n\t\tplot rename ' + crackPlot + 
+                                 '\n\t\tplot add ' + specifier + crackPlot)
+        crackPlotsOpen.write('\n\tendcommand') 
+        for crackPlot in crackPlots:
+            crackPlotsOpen.write('\n\t' + crackPlot + 'File = saveCyc_' + crackPlot + '.png')
+            crackPlotsOpen.write('\n\tcommand \n\t\tplot bitmap plot ' + crackPlot + 
+                             ' filename ' + '@' + crackPlot + 'File \n\tencommand \nend')     
+        crackPlotsOpen.close()
+        crackPlotFile = open(self.filePath + 'makeCrackPlots.txt', 'r')
+        crackPlotText = crackPlotFile.read()
+        crackPlotFile.close()
+        outfile.write(crackPlotText)    
+        
+        
+    def writeMovieFunctions(self,outfile):
+        #make sure you write the individual functions like makeMoviePlots, makeCrackPlots, clearPlots, plotCrackPlots
+        if 'makeMoviePlots' in self.movieHandles:
+            print('makemovieplots is here')
+            self.writemakeMoviePlots(outfile)
+            
+        #add other specialty functions
+        if 'makeCrackPlots' in self.movieHandles:
+            print('makecrackplots is here')
+            self.writemakeCrackPlots(outfile)
+        
+        
+    def writeClearPlots(self, outfile):
+        clearPlotsOpen = open(self.filePath + 'clearPlots.txt', 'w+')
+        clearPlotsOpen.write('\n;this is a function that destroys all plots')
+        clearPlotsOpen.write('\ndef clearPlots \n\tcommmand')
+        for function in self.functionHandles:
+            function = function
+            clearPlotsOpen.write('\n\t\tplot destroy plot ' + function)
+        for function in self.movieHandles:
+            clearPlotsOpen.write('\n\t\tplot destroy plot ' + function)
+        clearPlotsOpen.write('\n\tendcommand \nend')
+        
+        clearPlotsOpen.close()
+        clearPlotsFile = open(self.filePath + 'clearPlots.txt', 'r')
+        clearPlotsText = clearPlotsFile.read()
+        clearPlotsFile.close()
+        outfile.write(clearPlotsText)
+    
     #this function is called by write3decfile to write all the functions and their calls
     def writeFunctions(self, outfile):
+     
         functionCall = '\n'
+        #functionList = {}
         outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
+        
+        self.writeMovieFunctions(outfile)
+       
         for function in self.functionHandles:
-            functionFull = functionPath + function
+            functionFull = functionPath + function + '.txt'
             openFunction = open(functionFull, 'r')
             dataFunction = openFunction.read()
             openFunction.close()
+            outfile.write('\n')
             outfile.write(dataFunction)   
-            functionCall += '@' + function.replace('.txt','') + '\n'
-            
+            functionCall += '@' + function + '\n'
+            #function = function.replace('.txt', '') 
+            #functionList[function] = keyNumber
+        #defining setup variables
+        overwrites = {'movieInterval' : self.movieInterval, 'dampBool': self.dampBool, 'faceTriBool' : self.faceTriBool, 
+                      'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
+                      'arraySize' : self.arraySize, 'threshold' : self.threshold}
+        #start writing setup
         setupFull = functionPath + 'SETUP_setup.txt'    
         openSetup = open(setupFull, 'r')
         dataSetup = openSetup.read()
         openSetup.close()
         outfile.write('\n;--------------------------------SETUP------------------------------------\n')
+        #WORKING HERE!!!!!!!!!!!!!!!!!!!!!!!!!
+        for overwrite in overwrites:
+            insertString = 'insert' + overwrite
+            dataSetup = re.sub(insertString, str(overwrites[overwrite]), dataSetup)
+        #filePath = self.filePath
+        #filePath = re.sub("\\", replace, filePath)
+        #print(filePath)
+        #dataSetup = re.sub(r'\binsertpath\b',filePath, dataSetup)
+        #dataSetup = re.sub('insertrunName', self.fileName, dataSetup)
+        #dont forget to do saveCyc = 'cycstate' + fileName
         outfile.write('\n' + dataSetup)
+        if self.movieHandles != []:
+            self.writeClearPlots(outfile)
         outfile.write('\n;--------------------------------FUNCTION CALLS------------------------------------\n')
         outfile.write('\n@setup')
         outfile.write(functionCall)
-
+        if self.movieHandles != []:
+            outfile.write('\n@clearPlots')
+        
+        
     #used in write3decfile to grab all of the pertinent files
     def getFileHandles(self):
         self.fileHandles = {}
@@ -171,7 +286,6 @@ class experiment():
         # first assign indices to unique materials
         for i in range(len(self.materials)):
             self.materials[i].idx = i + 1
-            print('idx = ' + str(self.materials[i].idx))
         for k in range(len(self.jointMaterials)):
             self.jointMaterials[k].jidx = k + 1
 
@@ -182,7 +296,6 @@ class experiment():
         if iterator == 'base':
             self.numSimulations = len(self.fileHandles['base'])
         elif iterator == 'load':
-            print(self.load_iterator)
             self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
         else:
             print('Iterator must be either base or load')
@@ -200,8 +313,7 @@ class experiment():
             #open the file and writing
             outfile = open(output, 'w+')
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-            outfile.write('new\n' + ';This is file ' + str(i) + '\n')
-
+            outfile.write('new\n' + ';This is file ' + str(j) + '\n')
             #open the file and write the geometry and parameters
             self.writeGeomandParam(j, outfile)
             
@@ -213,7 +325,10 @@ class experiment():
                         
             #write the functions that can be called
             self.writeFunctions(outfile)
-
+            
+            #write the moviefunctions
+            
+            
             outfile.close()
 
 
@@ -226,16 +341,27 @@ outFileName = 'TEST_3DEC_INPUT'
 iterator = 'load' #can iterate over base or load
 #if iterator = 'load' the following parameters need to be specified
 
+# define functions and movies
+#options = getDisplacement, getStres, getCracks, getFinalCentroid, getVolume, getInitCentroid,
+#           getInitVert, getFinalVert, getNeighbors
+functionHandles = ['getstress', 'cycloop', 'getCracks']
+#options = 'makeMoviePlots', 'makeCrackPlots'
+movieHandles = ['makeMoviePlots', 'makeCrackPlots']
 
-# define functions
-functionHandles = ['getstress.txt', 'cycloop.txt']
-
-my_experiment = experiment(filePath, functionPath, outFileName, iterator, functionHandles, load_min = 0., load_max = 1000., load_iterator = 250.)
+# list movie plots you want 
+#options: displacement, xdisplacement, ydisplacement, zdisplacement, smaximum, sminimum
+plots = ['displacement', 'smaximum']
 
 # define materials(dens, edge, fixity, hide, ymod)
 mortar = material({'dens':2200., 'edge':100., 'hide':True})
 stone = material({'dens':2400.})
 fixedstone = material({'dens':2400.,'fixity':'fix'})
+
+# pass input variables   
+#sample of all the variables that can be included
+my_experiment = experiment(filePath, functionPath, outFileName, iterator, functionHandles, movieHandles, plots, load_min = 0., 
+                           load_max = 1000., load_iterator = 250., movieInterval = 1000., dampBool = True, faceTriBool = True, 
+                           numCycLoops = 10., numCycles = 1000., solveRatio = 5., arraySize = 30000., threshold = 0.001)
 
 # define joint materials
 mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37.})
