@@ -4,7 +4,7 @@ def setup ; SETUP KEY VARIABLES
 	IO_FISH = 0
 	IO_ASCII = 1
 
-	path = 'insertpath\'
+	path = 'insertpath'
 	runName = 'insertrunName'
 	movieInterval = insertmovieInterval
 	dampBool = insertdampBool
@@ -14,7 +14,8 @@ def setup ; SETUP KEY VARIABLES
 	solveRatio = insertsolveRatio
 	arraySize = insertarraySize
 	threshold = insertthreshold
-		
+	saveCyc = 'cycstate_' + runName
+	
 	initialCentroid_suffix = '_iniCent.dat'	
 	finalCentroid_suffix = '_finalCent.dat'
 	vol_suffix = '_vol.dat'
