@@ -31,7 +31,7 @@ plots = ['displacement', 'smaximum']
 
 #______________________________________________________________
 
-# define materials(dens, edge, fixity, hide, ymod)
+# define materials(dens, edge, fixity, hide, ymod, join)
 #mortar = material({'dens':2200, 'edge':100, 'hide':True})
 stone = gen.material({'dens':2400, 'ymod': 1e9, 'edge':100})
 fixedstone = gen.material({'dens':2400,'fixity':'fix'})
