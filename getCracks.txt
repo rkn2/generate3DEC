@@ -6,7 +6,7 @@ def getCracks(threshold)
     loop while cxi # 0
       if cx_ndis(cxi) > threshold
         c_group(ci) = 'crack'
-        status = out('crack found')
+        ;status = out('crack found')
         count = count + 1
       end_if
       cxi = cx_next(cxi)

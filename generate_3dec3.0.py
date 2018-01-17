@@ -165,7 +165,7 @@ class experiment():
         moviePlotsOpen.write('\n;This is a function to create movie plots.')
         moviePlotsOpen.write('\ndef makeMoviePlots \n\tcommand ')
         #takes the place of movie_setup_func
-        moviePlotsOpen.write('\n\t\tplot set movieactive false \n\t\tplotset movieprefix @runName' + 
+        moviePlotsOpen.write('\n\t\tplot set movieactive false \n\t\tplot set movieprefix @runName' + 
                              '\n\t\tplot set moviein @movieInterval \n\t\tplot set index 1' + 
                              '\n\t\tplot set movieactive true')
         
@@ -177,7 +177,7 @@ class experiment():
                 specifier = 'blockcontour '                
             moviePlotsOpen.write('\n\t\tplot create \n\t\tplot rename ' + plotName + 
                                  '\n\t\tplot clear \n\t\tplot add ' + specifier + plotName)
-        moviePlotsOpen.write('\n\tendcomand \nend')
+        moviePlotsOpen.write('\n\tendcommand \nend')
         moviePlotsOpen.close()
         moviePlotFile = open(self.filePath + 'makeMoviePlots.txt', 'r')
         moviePlotText = moviePlotFile.read()
@@ -188,17 +188,17 @@ class experiment():
         crackPlotsOpen = open(self.filePath + 'makeCrackPlots.txt', 'w+')
         crackPlotsOpen.write('\n;This is a function to create crack plots.')
         crackPlotsOpen.write('\ndef makeCrackPlots \n\tcommand ')
-        crackPlots = ['ndisplacement', 'nstress']
-        for crackPlot in crackPlots:
+        self.crackPlots = ['ndisplacement', 'nstress']
+        for crackPlot in self.crackPlots:
             #rewrite as if statement if you ever have any other specifiers
             specifier = 'jointcontour '
             crackPlotsOpen.write('\n\t\tplot create \n\t\tplot rename ' + crackPlot + 
                                  '\n\t\tplot add ' + specifier + crackPlot)
         crackPlotsOpen.write('\n\tendcommand') 
-        for crackPlot in crackPlots:
-            crackPlotsOpen.write('\n\t' + crackPlot + 'File = saveCyc + _"' + crackPlot + '.png"')
+        for crackPlot in self.crackPlots:
+            crackPlotsOpen.write('\n\t' + crackPlot + 'File = saveCyc + "_' + crackPlot + '.png"')
             crackPlotsOpen.write('\n\tcommand \n\t\tplot bitmap plot ' + crackPlot + 
-                             ' filename ' + '@' + crackPlot + 'File \n\tencommand')
+                             ' filename ' + '@' + crackPlot + 'File \n\tendcommand')
         crackPlotsOpen.write('\nend')     
         crackPlotsOpen.close()
         crackPlotFile = open(self.filePath + 'makeCrackPlots.txt', 'r')
@@ -220,12 +220,12 @@ class experiment():
     def writeClearPlots(self, outfile):
         clearPlotsOpen = open(self.filePath + 'clearPlots.txt', 'w+')
         clearPlotsOpen.write('\n;this is a function that destroys all plots')
-        clearPlotsOpen.write('\ndef clearPlots \n\tcommmand')
-        for function in self.functionHandles:
-            function = function
-            clearPlotsOpen.write('\n\t\tplot destroy plot ' + function)
-        for function in self.movieHandles:
-            clearPlotsOpen.write('\n\t\tplot destroy plot ' + function)
+        clearPlotsOpen.write('\ndef clearPlots \n\tcommand')
+        for plot in self.plots:
+            clearPlotsOpen.write('\n\t\tplot destroy plot ' + plot)
+        if 'makeCrackPlots' in self.movieHandles:
+            for plot in self.crackPlots:
+                clearPlotsOpen.write('\n\t\tplot destroy plot ' + plot)
         clearPlotsOpen.write('\n\tendcommand \nend')
         
         clearPlotsOpen.close()
@@ -296,10 +296,19 @@ class experiment():
         
     #this function is called by write functions to generate the cycle functions    
     def writeCycLoop(self, outfile):
-        outfile.write('\ndef cycLoop \n\tloop n(1, numCycloops) \n\t\tcommand'
+        outfile.write('\ndef cycLoop \n\tloop n(1, numCycloops)'
+                      + '\n\t\tsaveFile = "saveCyc" + "_" + string(n)')
+        if self.movieHandles == []:
+            self.plots = []
+        for plot in self.plots:
+            outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')                                    
+        outfile.write('\n\t\tcommand'
                       + '\n\t\t\tDAMP LOCAL \n\t\t\tfacetri rad8 \n\t\t\tcyc @numCycles'
-                      + '\n\t\t\tsave @saveCyc \n\t\t\t;make movies here'
-                      + '\n\t\tendcommand \n\tend_loop \nend')
+                      + '\n\t\t\tsave @saveCyc')                      
+        for plot in self.plots:
+            outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
+        
+        outfile.write('\n\t\tendcommand \n\tend_loop \nend')
     
     
     def writeRatioLoop(self,outfile):
@@ -307,10 +316,16 @@ class experiment():
                       + '\n\tcommand \n\t\tDAMP LOCAL \n\t\tfacetri rad8'
                       + '\n\tendcommand \n\tloop while i < solveRatio'
                       + '\n\t\ti_string = string(i) \n\t\trat = rat/2'
-                      + '\n\t\tsaveFile = "saveCyc" + "_" + string(i)'
-                      + '\n\t\tcommand \n\t\t\tsolve ratio @rat cyc 10000'
-                      + '\n\t\t\tsave @saveCyc'
-                      + '\n\t\tendcommand \n\t\ti = i + 1'
+                      + '\n\t\tsaveFile = "saveCyc" + "_" + string(i)')
+        if self.movieHandles == []:
+            self.plots = []
+        for plot in self.plots:
+            outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')
+        outfile.write('\n\t\tcommand \n\t\t\tsolve ratio @rat cyc 10000'
+                      + '\n\t\t\tsave @saveCyc')
+        for plot in self.plots:
+            outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
+        outfile.write('\n\t\tendcommand \n\t\ti = i + 1'
                       + '\n\tend_loop \nend')
         
     
@@ -445,7 +460,7 @@ class experiment():
 filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" 
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'base' #can iterate over base or load
+iterator = 'load' #can iterate over base or load
 cycChoice = 'loop' #can be ratio or loops
 
 #______________________________________________________________
@@ -454,10 +469,10 @@ cycChoice = 'loop' #can be ratio or loops
 #options = getDisplacement, getStress, getCracks, getFinalCentroid, getVolume, getInitCentroid,
 #           getInitVert, getFinalVert, getNeighbors
 # cycle choice is either cycloop or cycratio
-functionHandles = ['getCracks','getDisplacement', 'getInitCentroid', 'getFinalCentroid', 'getStress', 'getVolume', 'getInitVert', 'getFinalVert', 'getNeighbors']
+functionHandles = ['getCracks']
 
 #options = 'makeMoviePlots', 'makeCrackPlots'
-movieHandles = []
+movieHandles = ['makeMoviePlots', 'makeCrackPlots']
 
 # list movie plots you want 
 #options: displacement, xdisplacement, ydisplacement, zdisplacement, smaximum, sminimum
