@@ -10,7 +10,7 @@ def getDisplacement ;PRINT OUT FINAL DISPLACEMENTS OF BLOCKS
 	    	bi = b_next(bi)
 		m = m + dm 
     	end_loop
-   	dispFileName = path + run_name + disp_suffix
+   	dispFileName = path + runName + disp_suffix
    	openFile = open(dispFileName, IO_WRITE, IO_ASCII)
 	writeFile = write(disp,m)
 	closeFile = close

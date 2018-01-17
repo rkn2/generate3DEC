@@ -14,7 +14,7 @@ def getFinalVert
 	bi = b_next(bi)
 	end_loop
 
-	vertexFileName = path + run_name + final_vertex_suffix
+	vertexFileName = path + runName + final_vertex_suffix
 	;status = out(vertexFileName)
    	openFile = open(vertexFileName, IO_WRITE, IO_ASCII)
 	writeFile = write(f_vertex,m)

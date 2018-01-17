@@ -3,8 +3,8 @@ def cycLoop
 		command 
 			DAMP LOCAL
 			facetri rad8
-			cyc numCycles
-			save saveCyc
+			cyc @numCycles
+			save @saveCyc
 		endcommand
 	end_loop
 end

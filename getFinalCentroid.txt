@@ -10,7 +10,7 @@ def getFinalCentroid ;MAKE NOTE OF FINAL LOCATION OF BLOCKS
       bi = b_next(bi)
     end_loop
     
-    finalCentroidFileName = path + run_name + finalCentroid_suffix
+    finalCentroidFileName = path + runName + finalCentroid_suffix
     openFile = open(finalCentroidFileName, IO_WRITE, IO_ASCII)
     writeFile = write(f_centroid,m)
     closeFile = close

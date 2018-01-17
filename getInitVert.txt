@@ -17,7 +17,7 @@ def getInitVert
 	bi = b_next(bi)
 	end_loop
 
-	vertexFileName = path + run_name + initial_vertex_suffix
+	vertexFileName = path + runName + initial_vertex_suffix
 	;status = out(vertexFileName)
    	openFile = open(vertexFileName, IO_WRITE, IO_ASCII)
 	writeFile = write(initialVertex,m)

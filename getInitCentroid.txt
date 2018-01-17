@@ -9,7 +9,7 @@ def getInitCentroid ;MAKE NOTE OF INITIAL LOCATION OF BLOCKS
       bi = b_next(bi)
     end_loop
     
-    initialCentroidFileName = path + run_name + initialCentroid_suffix
+    initialCentroidFileName = path + runName + initialCentroid_suffix
     openFile = open(initialCentroidFileName, IO_WRITE, IO_ASCII)
     writeFile = write(ini_centroid,m)
     closeFile = close

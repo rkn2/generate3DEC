@@ -22,7 +22,7 @@ def cycRatio
 			;cyc 1
 			;plot hist 2 v 1
 			solve ratio @rat cyc 10000
-			save saveCyc
+			save @saveCyc
 			plot bitmap plot dispM filename @dispMFile
 			plot bitmap plot xdisp filename @dispxFile
 			plot bitmap plot ydisp filename @dispyFile

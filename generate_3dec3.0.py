@@ -131,7 +131,7 @@ class experiment():
     #this function is called by write3decfile to assign material properties
     def assignMat(self, outfile):
         outfile.write('\n;--------------------------------ASSIGN MATERIALS-----------------------------------\n')  
-        #outfile.write('\nhide')
+        outfile.write('\ngrav 0 0 -10')
         for geom in self.geometries:
             outfile.write('\nshow range group ' + geom.label)
             outfile.write('\nchange mat ' + str(geom.material.idx))
@@ -251,6 +251,8 @@ class experiment():
         funcDict = {}
         for entry in funcList:
             value = orderedList.index(entry)
+            if entry == 'getCracks':
+                entry = 'getCracks(' + str(self.threshold) + ')'
             funcDict[entry] = value
         if self.movieHandles != []:   
             value = orderedList.index('clearPlots')
@@ -426,7 +428,7 @@ cycChoice = 'loop' #can be ratio or loops
 #options = getDisplacement, getStress, getCracks, getFinalCentroid, getVolume, getInitCentroid,
 #           getInitVert, getFinalVert, getNeighbors
 # cycle choice is either cycloop or cycratio
-functionHandles = ['getDisplacement']
+functionHandles = ['getCracks','getDisplacement', 'getInitCentroid', 'getFinalCentroid', 'getStress', 'getVolume', 'getInitVert', 'getFinalVert', 'getNeighbors']
 
 #options = 'makeMoviePlots', 'makeCrackPlots'
 movieHandles = []
@@ -438,8 +440,8 @@ plots = ['displacement', 'smaximum']
 #______________________________________________________________
 
 # define materials(dens, edge, fixity, hide, ymod)
-#mortar = material({'dens':2200., 'edge':100., 'hide':True})
-stone = material({'dens':2400})
+#mortar = material({'dens':2200, 'edge':100, 'hide':True})
+stone = material({'dens':2400, 'ymod': 1e9, 'edge':100})
 fixedstone = material({'dens':2400,'fixity':'fix'})
 
 #______________________________________________________________

@@ -12,7 +12,7 @@ def getNeighbors
 		m = m + dm 
     end_loop
     
-    infoFileName = path + run_name + neighbor_suffix
+    infoFileName = path + runName + neighbor_suffix
    	openFile = open(infoFileName, IO_WRITE, IO_ASCII)
 	writeFile = write(neighbors_,m)
 	closeFile = close

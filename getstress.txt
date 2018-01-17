@@ -1,4 +1,4 @@
-def get_stress
+def getStress
 	bi = block_head
 	m = 1
 	loop while bi # 0
@@ -14,7 +14,7 @@ def get_stress
 		end_loop
 	bi = b_next(bi)
 	end_loop
-	stressFileName = path + run_name + stress_suffix
+	stressFileName = path + runName + stress_suffix
    	openFile = open(stressFileName, IO_WRITE, IO_ASCII)
 	writeFile = write(stress_,m)
 	closeFile = close
