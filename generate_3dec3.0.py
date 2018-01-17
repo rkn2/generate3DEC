@@ -241,9 +241,7 @@ class experiment():
         for eachHandle in self.functionHandles:
             funcList.append(eachHandle)
         for eachHandle in self.movieHandles:
-            funcList.append(eachHandle)
-
-            
+            funcList.append(eachHandle)            
             
         orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio',
                        'cycLoop', 'getStress', 'getDisplacement', 'getFinalCentroid', 'getFinalVert', 'getCracks', 'makeCrackPlots', 'clearPlots']    
@@ -254,9 +252,17 @@ class experiment():
             if entry == 'getCracks':
                 entry = 'getCracks(' + str(self.threshold) + ')'
             funcDict[entry] = value
+        #add clearplots only if there are movies to clear
         if self.movieHandles != []:   
             value = orderedList.index('clearPlots')
             funcDict['clearPlots'] = value
+        #add cycle to the Dictionary based on choice
+        if self.cycChoice == 'loop':
+            value = orderedList.index('cycLoop')
+            funcDict['cycLoop'] = value
+        if self.cycChoice == 'ratio':
+            value = orderedList.index('cycRatio')
+            funcDict['cycRatio'] = value
             
         funcCall = []
         results = sorted(funcDict.items(), key = lambda x: x[1])
@@ -287,6 +293,26 @@ class experiment():
         
         #dont forget to do saveCyc = 'cycstate' + fileName
         outfile.write('\n' + dataSetup)
+        
+    #this function is called by write functions to generate the cycle functions    
+    def writeCycLoop(self, outfile):
+        outfile.write('\ndef cycLoop \n\tloop n(1, numCycloops) \n\t\tcommand'
+                      + '\n\t\t\tDAMP LOCAL \n\t\t\tfacetri rad8 \n\t\t\tcyc @numCycles'
+                      + '\n\t\t\tsave @saveCyc \n\t\t\t;make movies here'
+                      + '\n\t\tendcommand \n\tend_loop \nend')
+    
+    
+    def writeRatioLoop(self,outfile):
+        outfile.write('\ndef cycRatio \n\trat = float("1e-0") \n\ti = 0'
+                      + '\n\tcommand \n\t\tDAMP LOCAL \n\t\tfacetri rad8'
+                      + '\n\tendcommand \n\tloop while i < solveRatio'
+                      + '\n\t\ti_string = string(i) \n\t\trat = rat/2'
+                      + '\n\t\tsaveFile = "saveCyc" + "_" + string(i)'
+                      + '\n\t\tcommand \n\t\t\tsolve ratio @rat cyc 10000'
+                      + '\n\t\t\tsave @saveCyc'
+                      + '\n\t\tendcommand \n\t\ti = i + 1'
+                      + '\n\tend_loop \nend')
+        
     
     #this function is called by write3decfile to write all the functions and their calls
     def writeFunctions(self, outfile, writeFile, j):
@@ -295,11 +321,11 @@ class experiment():
         
         self.writeMovieFunctions(outfile)
         #add in function for cycle
-        if self.cycChoice == 'ratio' and j ==0:
-            self.functionHandles.append('cycRatio')
+        if self.cycChoice == 'loop':
+            self.writeCycLoop(outfile)
         
-        if self.cycChoice == 'loop' and j == 0:
-            self.functionHandles.append('cycLoop')
+        if self.cycChoice == 'ratio':
+            self.writeRatioLoop(outfile)
         
         #loop through all functions in function handles and write them in.             
         for function in self.functionHandles:
@@ -419,7 +445,7 @@ class experiment():
 filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" 
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'load' #can iterate over base or load
+iterator = 'base' #can iterate over base or load
 cycChoice = 'loop' #can be ratio or loops
 
 #______________________________________________________________
