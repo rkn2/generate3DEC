@@ -2,7 +2,7 @@ def cycRatio
 	rat = float('1e-0')
 	i = 0
 	command
-		damp local
+		DAMP LOCAL
 		facetri rad8
 	endcommand
 	loop while i < solveRatio

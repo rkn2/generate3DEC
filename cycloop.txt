@@ -6,5 +6,5 @@ def cycLoop
 			cyc numCycles
 			save saveCyc
 		endcommand
-	endloop
+	end_loop
 end
