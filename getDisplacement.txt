@@ -3,9 +3,8 @@ def getDisplacement ;PRINT OUT FINAL DISPLACEMENTS OF BLOCKS
     	m = 1
     	loop while bi # 0
     		dm = 1
-    		array disp( arraysize,1)
+    		array disp( INSERTarraysize ,1)
      		disp_ = (b_cent(bi) - b_extra(bi))
-		;status = out(string(bi)+' '+string(b_cent(bi))+' '+string(disp_))
 		status =(string(bi)+' '+ string(disp_))
 		disp(m,1) = status
 	    	bi = b_next(bi)

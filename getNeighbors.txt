@@ -3,7 +3,7 @@ def getNeighbors
 	m = 1
     loop while ci # 0
     		dm = 1
-    		array neighbors_( arraysize  ,1)
+    		array neighbors_( INSERTarraysize  ,1)
      	b1 = c_b1(ci)
 		b2 = c_b2(ci)
 		status2 =(string(b1)+' '+string(b2))

@@ -4,7 +4,7 @@ def get_stress
 	loop while bi # 0
 		zi = b_zone(bi)
 		loop while zi # 0
-			array stress_( arraysize , 1)
+			array stress_( INSERTarraysize , 1)
 			status1 = string(z_sig1(zi))
 			status2 = string(z_sig3(zi))
 			;z_sig is a vector of all three types of stress, z_sig1 is major principal stress, z_sig3 is minor principal stress

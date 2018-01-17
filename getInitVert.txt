@@ -5,7 +5,7 @@ def getInitVert
 		vi = b_vertex(bi)
 		status1 = ''
 		loop while vi # 0
-			array initialVertex( arraysize , 1)
+			array initialVertex( INSERTarraysize , 1)
 			status1 = string(status1) + string(gp_pos(vi))
 			;status_BID = string(bi)
 			;status = out(status1 + ' ;;; ' + status_BID)

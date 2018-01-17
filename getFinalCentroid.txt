@@ -3,7 +3,7 @@ def getFinalCentroid ;MAKE NOTE OF FINAL LOCATION OF BLOCKS
     m = 1
     loop while bi # 0
       b_extra(bi) = b_cent(bi)
-      array f_centroid( arraysize, 1)
+      array f_centroid( INSERTarraysize, 1)
       status = string(bi)+' '+ string(b_cent(bi))
       f_centroid(m,1) = status
       m = m + 1		

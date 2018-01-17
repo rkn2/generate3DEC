@@ -2,7 +2,7 @@ def getVolume ;PRINT OUT VOLUME OF BLOCKS
 	local bi = block_head
 	m = 1
 	loop while bi # 0 
-		array volume( arraysize ,1)
+		array volume( INSERTarraysize ,1)
 		volume(m, 1) = string(bi)+' '+ string(b_vol(bi))
 		bi = b_next(bi)
 		m = m + 1

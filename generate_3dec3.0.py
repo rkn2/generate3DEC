@@ -268,7 +268,7 @@ class experiment():
         #defining setup variables
         overwrites = {'movieInterval' : self.movieInterval, 
                       'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
-                      'arraySize' : self.arraySize, 'threshold' : self.threshold}
+                      'threshold' : self.threshold}
         #start writing setup
         setupFull = functionPath + 'SETUP_setup.txt'    
         openSetup = open(setupFull, 'r')
@@ -326,7 +326,10 @@ class experiment():
         for file in filesToJoin:
             with open(file) as infile:
                 fullData = infile.read()
+                # remove ret
                 fullData = re.sub(r'\bret\b','', fullData)
+                # subsitute arraysize variable for arraysize, this cannot be done in 3dec bc arrays cannot be dynamically set
+                fullData = re.sub(r'\bINSERTarraysize\b',str(self.arraySize), fullData)
                 for line in fullData:
                     openOutput.write(line)
         openOutput.close()
@@ -404,8 +407,8 @@ class experiment():
             
         #join all the files together
         self.joinFiles(filesToJoin)
-        #print(filesToJoin)
-
+        
+        #make last minute substitutions for things like: arraysize
         
 
 #============================================================
@@ -414,7 +417,7 @@ class experiment():
 filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" 
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'base' #can iterate over base or load
+iterator = 'load' #can iterate over base or load
 cycChoice = 'loop' #can be ratio or loops
 
 #______________________________________________________________
@@ -423,7 +426,7 @@ cycChoice = 'loop' #can be ratio or loops
 #options = getDisplacement, getStress, getCracks, getFinalCentroid, getVolume, getInitCentroid,
 #           getInitVert, getFinalVert, getNeighbors
 # cycle choice is either cycloop or cycratio
-functionHandles = []
+functionHandles = ['getDisplacement']
 
 #options = 'makeMoviePlots', 'makeCrackPlots'
 movieHandles = []
@@ -445,7 +448,7 @@ fixedstone = material({'dens':2400,'fixity':'fix'})
 #for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of all the variables that can be included
 my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, 
-                           load_max = 1000, load_iterator = 250, movieInterval = 1000,
+                           load_max = 1000, load_iterator = 1000, movieInterval = 1000,
                            numCycLoops = 10, numCycles = 1000, solveRatio = 5, arraySize = 30000, threshold = 0.001,
                            boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
 

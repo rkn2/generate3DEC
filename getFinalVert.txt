@@ -5,7 +5,7 @@ def getFinalVert
 		vi = b_vertex(bi)
 		status1 = ''
 		loop while vi # 0
-			array f_vertex( arraysize , 1)
+			array f_vertex( INSERTarraysize , 1)
 			status1 = string(status1) + string(gp_pos(vi))
 			vi = gp_next(vi)
 		end_loop

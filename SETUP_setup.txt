@@ -10,7 +10,6 @@ def setup ; SETUP KEY VARIABLES
 	numCycLoops = insertnumCycLoops
 	numCycles = insertnumCycles
 	solveRatio = insertsolveRatio
-	arraySize = insertarraySize
 	threshold = insertthreshold
 	saveCyc = 'cycstate_' + runName
 	
