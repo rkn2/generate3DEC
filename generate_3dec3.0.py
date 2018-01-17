@@ -50,7 +50,7 @@ class geometry():
 class experiment():
     # holds all the necessary objects to run an experiment
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, load_max = 0, load_iterator = 0, 
-                 movieInterval = 0, dampBool = None, faceTriBool = None, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0,
+                 movieInterval = 0, damp = None, faceTri = None, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0,
                  boundLoad = 0, loadLocation = None, loadOrientation = None):
         self.filePath = filePath
         self.functionPath = functionPath
@@ -67,8 +67,8 @@ class experiment():
         self.load_max = load_max
         self.load_iterator = load_iterator
         self.movieInterval = movieInterval
-        self.dampBool = dampBool
-        self.faceTriBool = faceTriBool
+        self.damp = damp
+        self.faceTri = faceTri
         self.numCycLoops = numCycLoops
         self.numCycles = numCycles
         self.solveRatio = solveRatio
@@ -97,7 +97,7 @@ class experiment():
         outfile.write(geom.material.write())
         outfile.write('\n')
         outfile.write(geom.jointMaterial.write())
-        outfile.write('\ngroup range block ' + geom.label + '\nhide' )
+        outfile.write('\ngroup block ' + geom.label + '\nhide' )
 
     #used in writegeometrybymat
     def writeGeometry(self,j,outfile, geom):
@@ -133,7 +133,7 @@ class experiment():
     #this function is called by write3decfile to assign material properties
     def assignMat(self, outfile):
         outfile.write('\n;--------------------------------ASSIGN MATERIALS-----------------------------------\n')  
-        outfile.write('\nhide')
+        #outfile.write('\nhide')
         for geom in self.geometries:
             outfile.write('\nshow range group ' + geom.label)
             outfile.write('\nchange mat ' + str(geom.material.idx))
@@ -198,9 +198,10 @@ class experiment():
                                  '\n\t\tplot add ' + specifier + crackPlot)
         crackPlotsOpen.write('\n\tendcommand') 
         for crackPlot in crackPlots:
-            crackPlotsOpen.write('\n\t' + crackPlot + 'File = saveCyc_' + crackPlot + '.png')
+            crackPlotsOpen.write('\n\t' + crackPlot + 'File = saveCyc + _"' + crackPlot + '.png"')
             crackPlotsOpen.write('\n\tcommand \n\t\tplot bitmap plot ' + crackPlot + 
-                             ' filename ' + '@' + crackPlot + 'File \n\tencommand \nend')     
+                             ' filename ' + '@' + crackPlot + 'File \n\tencommand')
+        crackPlotsOpen.write('\nend')     
         crackPlotsOpen.close()
         crackPlotFile = open(self.filePath + 'makeCrackPlots.txt', 'r')
         crackPlotText = crackPlotFile.read()
@@ -239,12 +240,12 @@ class experiment():
     def writeFuncCall(self,outfile):
         funcList = []
         funcList.append('setup')
-        funcList.append('clearPlots')
-        funcList.append('cycLoop')
         for eachHandle in self.functionHandles:
             funcList.append(eachHandle)
         for eachHandle in self.movieHandles:
             funcList.append(eachHandle)
+
+            
             
         orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio',
                        'cycLoop', 'getStress', 'getDisplacement', 'getFinalCentroid', 'getFinalVert', 'getCracks', 'makeCrackPlots', 'clearPlots']    
@@ -253,6 +254,9 @@ class experiment():
         for entry in funcList:
             value = orderedList.index(entry)
             funcDict[entry] = value
+        if self.movieHandles != []:   
+            value = orderedList.index('clearPlots')
+            funcDict['clearPlots'] = value
             
         funcCall = []
         results = sorted(funcDict.items(), key = lambda x: x[1])
@@ -264,7 +268,7 @@ class experiment():
     #this function is called by writeFunctions to generate the setup function
     def setupFunction(self, outfile, writeFile):
         #defining setup variables
-        overwrites = {'movieInterval' : self.movieInterval, 'dampBool': self.dampBool, 'faceTriBool' : self.faceTriBool, 
+        overwrites = {'movieInterval' : self.movieInterval, 'damp': self.damp, 'faceTri' : self.faceTri, 
                       'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
                       'arraySize' : self.arraySize, 'threshold' : self.threshold}
         #start writing setup
@@ -285,16 +289,16 @@ class experiment():
         outfile.write('\n' + dataSetup)
     
     #this function is called by write3decfile to write all the functions and their calls
-    def writeFunctions(self, outfile, writeFile):
+    def writeFunctions(self, outfile, writeFile, j):
      
         outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
         
         self.writeMovieFunctions(outfile)
         #add in function for cycle
-        if self.cycChoice == 'ratio':
+        if self.cycChoice == 'ratio' and j ==0:
             self.functionHandles.append('cycRatio')
-            
-        if self.cycChoice == 'loop':
+        
+        if self.cycChoice == 'loop' and j == 0:
             self.functionHandles.append('cycLoop')
         
         #loop through all functions in function handles and write them in.             
@@ -316,16 +320,19 @@ class experiment():
         for eachEntry in funcCall:
             outfile.write(eachEntry)
 
+
     #join all the files
     def joinFiles(self, filesToJoin):
         #join all the files together for one massive three dec script
         openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
         for file in filesToJoin:
-            #with open(self.filePath + file) as infile: #@@@@@@@@@@@@@@@@@@@@@@@
             with open(file) as infile:
-                for line in infile:
+                fullData = infile.read()
+                fullData = re.sub(r'\bret\b','', fullData)
+                for line in fullData:
                     openOutput.write(line)
         openOutput.close()
+
     #used in write3decfile to grab all of the pertinent files
     def getFileHandles(self):
         self.fileHandles = {}
@@ -376,7 +383,6 @@ class experiment():
             writeFile = fileName + self.insertion +'.3ddat'
             filesToJoin.append(writeFile)
             output = writeFile
-            #output = self.filePath + writeFile #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             #open the file and writing
             outfile = open(output, 'w+')
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
@@ -394,8 +400,8 @@ class experiment():
             self.loadBlocks(outfile)
             
             #write the functions that can be called
-            self.writeFunctions(outfile, writeFile)
-            
+            self.writeFunctions(outfile, writeFile, j)
+                        
             outfile.close()
             
         #join all the files together
@@ -407,22 +413,22 @@ class experiment():
 #============================================================
 #INPUT SCRIPT
 # set up experiment
-filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" #@@@@@@@@@@@@@@@@@@@@@
+filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" 
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST_3DEC_INPUT'
-iterator = 'load' #can iterate over base or load
+iterator = 'base' #can iterate over base or load
 cycChoice = 'loop' #can be ratio or loops
 
 #______________________________________________________________
 
 # define functions and movies
-#options = getDisplacement, getStres, getCracks, getFinalCentroid, getVolume, getInitCentroid,
+#options = getDisplacement, getStress, getCracks, getFinalCentroid, getVolume, getInitCentroid,
 #           getInitVert, getFinalVert, getNeighbors
 # cycle choice is either cycloop or cycratio
-functionHandles = ['getStress', 'getCracks']
+functionHandles = []
 
 #options = 'makeMoviePlots', 'makeCrackPlots'
-movieHandles = ['makeMoviePlots', 'makeCrackPlots']
+movieHandles = []
 
 # list movie plots you want 
 #options: displacement, xdisplacement, ydisplacement, zdisplacement, smaximum, sminimum
@@ -431,7 +437,7 @@ plots = ['displacement', 'smaximum']
 #______________________________________________________________
 
 # define materials(dens, edge, fixity, hide, ymod)
-mortar = material({'dens':2200., 'edge':100., 'hide':True})
+#mortar = material({'dens':2200., 'edge':100., 'hide':True})
 stone = material({'dens':2400.})
 fixedstone = material({'dens':2400.,'fixity':'fix'})
 
@@ -441,7 +447,7 @@ fixedstone = material({'dens':2400.,'fixity':'fix'})
 #for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of all the variables that can be included
 my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0., 
-                           load_max = 1000., load_iterator = 250., movieInterval = 1000., dampBool = True, faceTriBool = True, 
+                           load_max = 1000., load_iterator = 250., movieInterval = 1000., damp = "'local'", faceTri = 'rad8', 
                            numCycLoops = 10., numCycles = 1000., solveRatio = 5., arraySize = 30000., threshold = 0.001,
                            boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
 
@@ -453,7 +459,7 @@ mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37.})
 # add geometries to experiment
 my_experiment.addGeometry('base', fixedstone, mortar_stone)
 my_experiment.addGeometry('loadblock', stone, mortar_stone)
-my_experiment.addGeometry('mortar', mortar, mortar_stone)
+#my_experiment.addGeometry('mortar', mortar, mortar_stone)
 my_experiment.addGeometry('stone', stone, mortar_stone)
 
 # write geometries to 3dec file
