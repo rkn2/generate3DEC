@@ -50,7 +50,7 @@ class geometry():
 class experiment():
     # holds all the necessary objects to run an experiment
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, load_max = 0, load_iterator = 0, 
-                 movieInterval = 0, damp = None, faceTri = None, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0,
+                 movieInterval = 0, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0,
                  boundLoad = 0, loadLocation = None, loadOrientation = None):
         self.filePath = filePath
         self.functionPath = functionPath
@@ -67,8 +67,6 @@ class experiment():
         self.load_max = load_max
         self.load_iterator = load_iterator
         self.movieInterval = movieInterval
-        self.damp = damp
-        self.faceTri = faceTri
         self.numCycLoops = numCycLoops
         self.numCycles = numCycles
         self.solveRatio = solveRatio
@@ -268,7 +266,7 @@ class experiment():
     #this function is called by writeFunctions to generate the setup function
     def setupFunction(self, outfile, writeFile):
         #defining setup variables
-        overwrites = {'movieInterval' : self.movieInterval, 'damp': self.damp, 'faceTri' : self.faceTri, 
+        overwrites = {'movieInterval' : self.movieInterval, 
                       'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
                       'arraySize' : self.arraySize, 'threshold' : self.threshold}
         #start writing setup
@@ -438,21 +436,21 @@ plots = ['displacement', 'smaximum']
 
 # define materials(dens, edge, fixity, hide, ymod)
 #mortar = material({'dens':2200., 'edge':100., 'hide':True})
-stone = material({'dens':2400.})
-fixedstone = material({'dens':2400.,'fixity':'fix'})
+stone = material({'dens':2400})
+fixedstone = material({'dens':2400,'fixity':'fix'})
 
 #______________________________________________________________
 
 # pass input variables 
 #for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of all the variables that can be included
-my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0., 
-                           load_max = 1000., load_iterator = 250., movieInterval = 1000., damp = "'local'", faceTri = 'rad8', 
-                           numCycLoops = 10., numCycles = 1000., solveRatio = 5., arraySize = 30000., threshold = 0.001,
+my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, 
+                           load_max = 1000, load_iterator = 250, movieInterval = 1000,
+                           numCycLoops = 10, numCycles = 1000, solveRatio = 5, arraySize = 30000, threshold = 0.001,
                            boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
 
 # define joint materials
-mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37.})
+mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37})
 
 #______________________________________________________________
 

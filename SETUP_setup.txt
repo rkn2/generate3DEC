@@ -7,8 +7,6 @@ def setup ; SETUP KEY VARIABLES
 	path = 'insertpath'
 	runName = 'insertrunName'
 	movieInterval = insertmovieInterval
-	dampBool = insertdampBool
-	faceTriBool = insertfaceTriBool	
 	numCycLoops = insertnumCycLoops
 	numCycles = insertnumCycles
 	solveRatio = insertsolveRatio
