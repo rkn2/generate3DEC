@@ -2,7 +2,7 @@ def cycLoop
 	loop n(1,numCycloops)
 		command 
 			DAMP LOCAL
-			facetri rad8
+			;facetri rad8
 			cyc @numCycles
 			save @saveCyc
 		endcommand

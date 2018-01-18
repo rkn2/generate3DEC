@@ -3,7 +3,7 @@ def cycRatio
 	i = 0
 	command
 		DAMP LOCAL
-		facetri rad8
+		;facetri rad8
 	endcommand
 	loop while i < solveRatio
 		i_string = string(i)

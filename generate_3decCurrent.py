@@ -176,7 +176,7 @@ class experiment():
                              '\n\t\tplot set movieactive true')
         
         #takes the place of makemovieplots       
-        for plotName in plots: 
+        for plotName in self.plots: 
             if plotName == 'displacement' or plotName == 'xdisplacement' or plotName == 'ydisplacement' or plotName == 'zdisplacement':
                 specifier = 'contour '
             if plotName == 'smaximum' or plotName == 'sminimum':
@@ -284,7 +284,7 @@ class experiment():
                       'numCycLoops' : self.numCycLoops, 'numCycles' : self.numCycles, 'solveRatio' : self.solveRatio, 
                       'threshold' : self.threshold}
         #start writing setup
-        setupFull = functionPath + 'SETUP_setup.txt'    
+        setupFull = self.functionPath + 'SETUP_setup.txt'    
         openSetup = open(setupFull, 'r')
         dataSetup = openSetup.read()
         openSetup.close()
@@ -350,7 +350,7 @@ class experiment():
         
         #loop through all functions in function handles and write them in.             
         for function in self.functionHandles:
-            functionFull = functionPath + function + '.txt'
+            functionFull = self.functionPath + function + '.txt'
             openFunction = open(functionFull, 'r')
             dataFunction = openFunction.read()
             openFunction.close()
@@ -413,9 +413,9 @@ class experiment():
         # so lets make a list called fileHandles, we can do that in a different function above
         self.getFileHandles()
 
-        if iterator == 'base':
+        if self.iterator == 'base':
             self.numSimulations = len(self.fileHandles['base'])
-        elif iterator == 'load':
+        elif self.iterator == 'load':
             self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
         else:
             print('Iterator must be either base or load')
@@ -423,10 +423,10 @@ class experiment():
         filesToJoin = []
         
         for j in range(self.numSimulations):
-            #print ('This is iteration number ' + str(j))
-            if iterator == 'base':
+            print ('This is iteration number ' + str(j))
+            if self.iterator == 'base':
                 self.setupSimulationBase(j)
-            if iterator == 'load':
+            if self.iterator == 'load':
                 self.setupSimulationLoad(j)
             fileName = self.fileHandles['base'][self.runIndex]
             fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
@@ -459,58 +459,3 @@ class experiment():
         
         #make last minute substitutions for things like: arraysize
         
-
-##============================================================
-##INPUT SCRIPT
-## set up experiment
-#filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" 
-#functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
-#outFileName = 'TEST_3DEC_INPUT'
-#iterator = 'load' #can iterate over base or load
-#cycChoice = 'loop' #can be ratio or loops
-#
-##______________________________________________________________
-#
-## define functions and movies
-##options = getDisplacement, getStress, getCracks, getFinalCentroid, getVolume, getInitCentroid,
-##           getInitVert, getFinalVert, getNeighbors
-## cycle choice is either cycloop or cycratio
-#functionHandles = ['getCracks']
-#
-##options = 'makeMoviePlots', 'makeCrackPlots'
-#movieHandles = ['makeMoviePlots', 'makeCrackPlots']
-#
-## list movie plots you want 
-##options: displacement, xdisplacement, ydisplacement, zdisplacement, smaximum, sminimum
-#plots = ['displacement', 'smaximum']
-#
-##______________________________________________________________
-#
-## define materials(dens, edge, fixity, hide, ymod)
-##mortar = material({'dens':2200, 'edge':100, 'hide':True})
-#stone = material({'dens':2400, 'ymod': 1e9, 'edge':100})
-#fixedstone = material({'dens':2400,'fixity':'fix', 'join':'join'})
-#
-##______________________________________________________________
-#
-## pass input variables 
-##for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
-##sample of all the variables that can be included
-#my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, 
-#                           load_max = 1000, load_iterator = 1000, movieInterval = 1000,
-#                           numCycLoops = 10, numCycles = 1000, solveRatio = 5, arraySize = 30000, threshold = 0.001,
-#                           boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
-#
-## define joint materials
-#mortar_stone = jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37})
-#
-##______________________________________________________________
-#
-## add geometries to experiment
-#my_experiment.addGeometry('base', fixedstone, mortar_stone)
-#my_experiment.addGeometry('loadblock', stone, mortar_stone)
-##my_experiment.addGeometry('mortar', mortar, mortar_stone)
-#my_experiment.addGeometry('stone', stone, mortar_stone)
-#
-## write geometries to 3dec file
-#my_experiment.write3DECFile()

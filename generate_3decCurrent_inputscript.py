@@ -8,25 +8,26 @@ import generate_3decCurrent as gen
 #============================================================
 #INPUT SCRIPT
 # set up experiment
-filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/test/" 
+filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/mike/baptistery/2019/rigid_simplified/existing/" 
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST2_3DEC_INPUT'
-iterator = 'load' #can iterate over base or load
-cycChoice = 'loop' #can be ratio or loops
+iterator = 'base' #can iterate over base or load
+cycChoice = 'ratio' #can be ratio or loops
 
 #______________________________________________________________
 
 # define functions and movies
-#options = getDisplacement, getStress, getCracks, getFinalCentroid, getVolume, getInitCentroid,
-#           getInitVert, getFinalVert, getNeighbors
+#options = 'getDisplacement', 'getStress', 'getCracks', 'getFinalCentroid', 'getVolume', 'getInitCentroid',
+#           'getInitVert', 'getFinalVert', 'getNeighbors'
 # cycle choice is either cycloop or cycratio
-functionHandles = ['getCracks']
+functionHandles = ['getDisplacement', 'getStress', 'getCracks', 'getFinalCentroid', 'getVolume', 'getInitCentroid',
+                   'getInitVert', 'getFinalVert', 'getNeighbors']
 
 #options = 'makeMoviePlots', 'makeCrackPlots'
 movieHandles = ['makeMoviePlots', 'makeCrackPlots']
 
 # list movie plots you want 
-#options: displacement, xdisplacement, ydisplacement, zdisplacement, smaximum, sminimum
+#options: 'displacement', 'xdisplacement', 'ydisplacement', 'zdisplacement', 'smaximum', 'sminimum'
 plots = ['displacement', 'smaximum']
 
 #______________________________________________________________
