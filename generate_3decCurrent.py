@@ -110,7 +110,7 @@ class experiment():
             index = j
         else:
             index = 0
-
+        
         #uses information about the iterator to make the index
         openBlock = open(self.fileHandles[geom.label][index])
         dataBlock = openBlock.read()
@@ -150,6 +150,7 @@ class experiment():
         for geom in self.geometries:
             keys = geom.material.properties.keys()
             if 'hide' in keys:
+                print('hiding %s'%geom.label.upper())
                 outfile.write('\n\n;--------------------------------HIDING SELECTED BLOCKS------------------------------------')
                 outfile.write('\nhide range group ' + geom.label)
     
@@ -334,6 +335,8 @@ class experiment():
         outfile.write('\n\t\tendcommand \n\t\ti = i + 1'
                       + '\n\tend_loop \nend')
         
+    def writeTest(self, outfile):
+        outfile.write('\n;This is only a test run')
     
     #this function is called by write3decfile to write all the functions and their calls
     def writeFunctions(self, outfile, writeFile, j):
@@ -347,6 +350,9 @@ class experiment():
         
         if self.cycChoice == 'ratio':
             self.writeRatioLoop(outfile)
+            
+        if self.cycChoice == 'test':
+            self.writeTest(outfile)
         
         #loop through all functions in function handles and write them in.             
         for function in self.functionHandles:
