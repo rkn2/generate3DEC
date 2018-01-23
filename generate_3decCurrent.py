@@ -107,6 +107,8 @@ class experiment():
     def writeGeometry(self,j,outfile, geom):
         #figures out an index for iteration based on the iterator and the geometry
         if self.iterator == 'base' and geom.label == 'base':
+            index = j 
+        elif self.iterator == 'stone' and geom.label == 'stone':
             index = j
         else:
             index = 0
@@ -406,6 +408,11 @@ class experiment():
     def setupSimulationLoad(self, j):
         self.runIndex = 0
         self.insertion = '_' + str(j*self.load_iterator)
+        
+    #used in write3dec file to change index and insertion for filename based on iterator
+    def setupSimulationStone(self, j):
+        self.runIndex = j
+        self.insertion = ''
 
     #MAIN FUNCTION
     def write3DECFile(self):
@@ -423,6 +430,8 @@ class experiment():
             self.numSimulations = len(self.fileHandles['base'])
         elif self.iterator == 'load':
             self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
+        elif self.iterator == 'stone':
+            self.numSimulations = len(self.fileHandles['stone'])
         else:
             print('Iterator must be either base or load')
         
@@ -434,6 +443,8 @@ class experiment():
                 self.setupSimulationBase(j)
             if self.iterator == 'load':
                 self.setupSimulationLoad(j)
+            if self.iterator == 'stone':
+                self.setupSimulationStone(j)
             fileName = self.fileHandles['base'][self.runIndex]
             fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
             writeFile = fileName + self.insertion +'.3ddat'
