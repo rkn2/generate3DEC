@@ -55,8 +55,9 @@ class geometry():
 
 class experiment():
     # holds all the necessary objects to run an experiment
-    def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, load_max = 0, load_iterator = 0, 
-                 movieInterval = 0, numCycLoops = 0, numCycles = 0, solveRatio = 0, arraySize = 0, threshold = 0,
+    def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
+                 load_min = 0, load_max = 0, load_iterator = 0, 
+                 movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0,
                  boundLoad = 0, loadLocation = None, loadOrientation = None):
         self.filePath = filePath
         self.functionPath = functionPath

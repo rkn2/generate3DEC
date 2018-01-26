@@ -45,11 +45,10 @@ fixedstone = gen.material({'dens':2400,'fixity':'fix'})
 # pass input variables 
 #for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of all the variables that can be included
-my_experiment = gen.experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, 
-                           load_max = 1000, load_iterator = 1000, movieInterval = 1000,
-                           numCycLoops = 10, numCycles = 1000, solveRatio, arraySize = 30000, threshold = 0.001,
-                           boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
-
+my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
+                           load_min = 0, load_max = 1000, load_iterator = 1000, movieInterval = 1000,
+                           numCycLoops = 300, numCycles = 1000, arraySize = 3000000, threshold = 0.001,
+                           boundLoad = [], loadLocation = [], loadOrientation = [])
 # define joint materials
 mortar_stone = gen.jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37})
 
