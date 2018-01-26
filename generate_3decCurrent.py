@@ -306,7 +306,7 @@ class experiment():
     #this function is called by write functions to generate the cycle functions    
     def writeCycLoop(self, outfile):
         outfile.write('\ndef cycLoop \n\tloop n(1, numCycloops)'
-                      + '\n\t\tsaveFile = "saveCyc" + "_" + string(n)')
+                      + '\n\t\tsaveFile = saveCyc + "_" + string(n)')
         if self.movieHandles == []:
             self.plots = []
         for plot in self.plots:
@@ -381,12 +381,17 @@ class experiment():
         #join all the files together for one massive three dec script
         openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
         for file in filesToJoin:
+            print('opening ' + file)
             with open(file) as infile:
+                print('reading ' + file)
                 fullData = infile.read()
                 # remove ret
+                print('subing in for ret')
                 fullData = re.sub(r'\bret\b','', fullData)
+                print('subing in for arraysize')
                 # subsitute arraysize variable for arraysize, this cannot be done in 3dec bc arrays cannot be dynamically set
                 fullData = re.sub(r'\bINSERTarraysize\b',str(self.arraySize), fullData)
+                print('writing new lines')
                 for line in fullData:
                     openOutput.write(line)
         openOutput.close()
@@ -445,24 +450,29 @@ class experiment():
                 self.setupSimulationLoad(j)
             if self.iterator == 'stone':
                 self.setupSimulationStone(j)
+            print('iterator chosen...')
             fileName = self.fileHandles['base'][self.runIndex]
+            print('fileName chosen...')
             fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+            print('filename fixing...')
             writeFile = fileName + self.insertion +'.3ddat'
+            print('adding this to join list...')
             filesToJoin.append(writeFile)
             output = writeFile
             #open the file and writing
+            print('opening the file...')
             outfile = open(output, 'w+')
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
             outfile.write('new\n' + ';This is file ' + str(j) + '\n')
             #open the file and write the geometry and parameters
             self.writeGeomandParam(j, outfile)
-            
+            print('geom and param written')
             #assign material properties
             self.assignMat(outfile)
-            
+            print('materials assigned')
             #when last geom and param are written, make sure to hide the blocks that need to be hidden
             self.hideBlocks(outfile)
-                        
+            print('blocks hidden')            
             #loading is applied
             self.loadBlocks(outfile)
             
@@ -471,8 +481,7 @@ class experiment():
                         
             outfile.close()
             
+        print('Trying to join....')    
+            
         #join all the files together
         self.joinFiles(filesToJoin)
-        
-        #make last minute substitutions for things like: arraysize
-        
