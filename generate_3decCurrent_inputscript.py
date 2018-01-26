@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 
 path1 = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 sys.path.insert(0, path1) #navigate to function folder
@@ -12,7 +13,9 @@ filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/mike/baptistery/2019/
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
 outFileName = 'TEST2_3DEC_INPUT'
 iterator = 'base' #can iterate over base or load
-cycChoice = 'ratio' #can be ratio or loops
+cycChoice = 'ratio' #can be ratio or loop or test
+solveRat = 1e-5
+solveRatio = np.log(1e-0/solveRat)/np.log(2)
 
 #______________________________________________________________
 
@@ -44,7 +47,7 @@ fixedstone = gen.material({'dens':2400,'fixity':'fix'})
 #sample of all the variables that can be included
 my_experiment = gen.experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, load_min = 0, 
                            load_max = 1000, load_iterator = 1000, movieInterval = 1000,
-                           numCycLoops = 10, numCycles = 1000, solveRatio = 5, arraySize = 30000, threshold = 0.001,
+                           numCycLoops = 10, numCycles = 1000, solveRatio, arraySize = 30000, threshold = 0.001,
                            boundLoad = [200, 100], loadLocation = ['group base', 'x 100 200'], loadOrientation = ['z', 'z']) 
 
 # define joint materials
