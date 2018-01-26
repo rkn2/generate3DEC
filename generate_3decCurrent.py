@@ -174,9 +174,9 @@ class experiment():
         moviePlotsOpen.write('\n;This is a function to create movie plots.')
         moviePlotsOpen.write('\ndef makeMoviePlots \n\tcommand ')
         #takes the place of movie_setup_func
-        moviePlotsOpen.write('\n\t\tplot set movieactive false \n\t\tplot set movieprefix @runName' + 
-                             '\n\t\tplot set moviein @movieInterval \n\t\tplot set index 1' + 
-                             '\n\t\tplot set movieactive true')
+        moviePlotsOpen.write('\n\t\tplot set movieactive false ;\n\t\tplot set movieprefix @runName' + 
+                             ';\n\t\tplot set moviein @movieInterval ;\n\t\tplot set index 1' + 
+                             ';\n\t\tplot set movieactive')
         
         #takes the place of makemovieplots       
         for plotName in self.plots: 
