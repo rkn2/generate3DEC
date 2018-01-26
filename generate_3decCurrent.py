@@ -326,7 +326,7 @@ class experiment():
                       + '\n\tcommand \n\t\tDAMP LOCAL \n\t\tfacetri rad8'
                       + '\n\tendcommand \n\tloop while i < solveRatio'
                       + '\n\t\ti_string = string(i) \n\t\trat = rat/2'
-                      + '\n\t\tsaveFile = "saveCyc" + "_" + string(i)')
+                      + '\n\t\tsaveFile = saveCyc + "_" + string(i)')
         if self.movieHandles == []:
             self.plots = []
         for plot in self.plots:
