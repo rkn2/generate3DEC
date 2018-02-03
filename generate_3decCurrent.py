@@ -56,7 +56,7 @@ class geometry():
 class experiment():
     # holds all the necessary objects to run an experiment
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
-                 load_min = 0, load_max = 0, load_iterator = 0, 
+                 load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0,
                  boundLoad = 0, loadLocation = None, loadOrientation = None):
         self.filePath = filePath
@@ -73,6 +73,8 @@ class experiment():
         self.load_min = load_min
         self.load_max = load_max
         self.load_iterator = load_iterator
+        self.changeLoadOrient = changeLoadOrient
+        self.changeLoadLocation = changeLoadLocation
         self.movieInterval = movieInterval
         self.numCycLoops = numCycLoops
         self.numCycles = numCycles
@@ -113,7 +115,8 @@ class experiment():
             index = j
         else:
             index = 0
-        
+        print(index)
+        print(self.fileHandles['base'])
         #uses information about the iterator to make the index
         openBlock = open(self.fileHandles[geom.label][index])
         dataBlock = openBlock.read()
@@ -158,7 +161,11 @@ class experiment():
                 outfile.write('\nhide range group ' + geom.label)
     
     #this function is called by write3decfile to load blocks
-    def loadBlocks(self, outfile):
+    def loadBlocks(self, outfile, j):
+        if self.iterator == 'load':
+            outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
+            outfile.write('\nbound ' + self.changeLoadOrient + 'load ' + str(j*self.load_iterator) + ' ' + self.changeLoadLocation) 
+        
         if self.boundLoad != 0 and self.loadLocation != None:
             outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
             if len(self.boundLoad) != len(self.loadLocation):
@@ -168,6 +175,7 @@ class experiment():
             while loadIndex < numberLoads:
                 outfile.write('\nbound ' + str(self.loadOrientation[loadIndex]) + 'load ' + str(self.boundLoad[loadIndex]) +' range ' + str(self.loadLocation[loadIndex]))
                 loadIndex += 1
+
     
     #This is used in write functions
     def writemakeMoviePlots(self, outfile):
@@ -382,7 +390,6 @@ class experiment():
         #join all the files together for one massive three dec script
         openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
         for file in filesToJoin:
-            print('opening ' + file)
             with open(file) as infile:
                 print('reading ' + file)
                 fullData = infile.read()
@@ -403,6 +410,8 @@ class experiment():
         #gets all the fileHandles
         for geom in self.geometries:
             self.fileHandles[geom.label] = glob.glob(self.filePath + '*_' + geom.label + '.3ddat')
+            print(self.fileHandles['base'])
+            
             #SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
 
     #used in write3dec file to change index and insertion for filename based on iterator
@@ -452,9 +461,14 @@ class experiment():
             if self.iterator == 'stone':
                 self.setupSimulationStone(j)
             print('iterator chosen...')
-            fileName = self.fileHandles['base'][self.runIndex]
+            if self.iterator == 'base':
+                fileName = self.fileHandles['base'][self.runIndex]
+            if self.iterator == 'load':
+                fileName = self.fileHandles['base'][self.runIndex]
+            if self.iterator == 'stone':
+                fileName = self.fileHandles['stone'][self.runIndex]
             print('fileName chosen...')
-            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','')
+            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','').replace('_stone','')
             print('filename fixing...')
             writeFile = fileName + self.insertion +'.3ddat'
             print('adding this to join list...')
@@ -475,7 +489,7 @@ class experiment():
             self.hideBlocks(outfile)
             print('blocks hidden')            
             #loading is applied
-            self.loadBlocks(outfile)
+            self.loadBlocks(outfile, j)
             
             #write the functions that can be called
             self.writeFunctions(outfile, writeFile, j)
