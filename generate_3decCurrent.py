@@ -58,7 +58,7 @@ class experiment():
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0,
-                 boundLoad = 0, loadLocation = None, loadOrientation = None):
+                 boundLoad = 0, loadLocation = None, loadOrientation = None, eqVertices = 0):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -84,6 +84,7 @@ class experiment():
         self.boundLoad = boundLoad
         self.loadLocation = loadLocation
         self.loadOrientation = loadOrientation
+        self.eqVertices = eqVertices
         
 
     # used to bring inputs into specific formats
@@ -165,13 +166,20 @@ class experiment():
                 outfile.write('\nhide range group ' + geom.label)
     
     #this function is called by write3decfile to load blocks
-    def loadBlocks(self, outfile, j):
+    def loadBlocks(self, outfile, j, fileName):
+        outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
         if self.iterator == 'load':
-            outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
             outfile.write('\nbound ' + self.changeLoadOrient + 'load ' + str(j*self.load_iterator) + ' ' + self.changeLoadLocation) 
         
+        if self.eqVertices != 0:
+            #0.2*9.8*density*volume/vertices #dens hardcoded right now
+            startVal = fileName.rfind('_') + 1
+            volVar = float(fileName[startVal:])
+            volume = 213.89 * volVar - 29.266
+            eqBoundLoad = 0.2*9.8*2300*volume/self.eqVertices
+            outfile.write('\nbound xload ' + str(eqBoundLoad) + ' range x -1000 1000')
+        
         if self.boundLoad != 0 and self.loadLocation != None:
-            outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
             if len(self.boundLoad) != len(self.loadLocation):
                 print('Differnet number of loads and positions')
             numberLoads = len(self.boundLoad)
@@ -490,7 +498,7 @@ class experiment():
             self.assignMat(outfile)
             print('materials assigned')
             #loading is applied
-            self.loadBlocks(outfile, j)
+            self.loadBlocks(outfile, j, fileName)
             #when last geom and param are written, make sure to hide the blocks that need to be hidden
             self.hideBlocks(outfile)
             print('blocks hidden')            
