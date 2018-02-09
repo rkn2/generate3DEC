@@ -12,7 +12,7 @@ class material():
         self.properties = properties
         self.idx = None
 
-    def write(self):
+    def write(self, geom):
         # write mat properties to string;
         propertyString = ''
         
@@ -22,8 +22,8 @@ class material():
                 propertyString += '\njoin '
         for aProperty in self.properties:
             if aProperty == 'edge': 
-                propertyString += '\ngen edge ' + str(self.properties[aProperty]) 
-        propertyString += '\nprop mat ' + str(self.idx) #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                propertyString += '\ngen edge ' + str(self.properties[aProperty]) #+ '\nshow range group '   + str(geom.label) 
+        propertyString += '\nprop mat ' + str(self.idx) 
         for aProperty in self.properties:
             if aProperty != 'edge' and aProperty != 'fixity' and aProperty != 'hide' and aProperty !='join':
                 propertyString += ' %s %s '%(aProperty,self.properties[aProperty])
@@ -101,10 +101,13 @@ class experiment():
     def writeParams(self, outfile, geom):
         outfile.write('\n;--------------------------------%s PARAMETERS-----------------------------------\n'%geom.label.upper())
         outfile.write('\n')
-        outfile.write(geom.material.write())
+        outfile.write('\ngroup block ' + geom.label  )
+        outfile.write('\n')
+        outfile.write(geom.material.write(geom))
         outfile.write('\n')
         outfile.write(geom.jointMaterial.write())
-        outfile.write('\ngroup block ' + geom.label + '\nhide' )
+        outfile.write('\nhide')
+
 
     #used in writegeometrybymat
     def writeGeometry(self,j,outfile, geom):
@@ -132,6 +135,7 @@ class experiment():
             if 'edge' in keys:
                 self.writeGeometry(i, outfile, geom)
                 self.writeParams(outfile, geom)
+        #outfile.write('\nshow \ngen edge ' + str(self.edge) + '\nhide')
 
         #this writes geometry for any rigid materials
         for geom in self.geometries:
@@ -485,11 +489,12 @@ class experiment():
             #assign material properties
             self.assignMat(outfile)
             print('materials assigned')
+            #loading is applied
+            self.loadBlocks(outfile, j)
             #when last geom and param are written, make sure to hide the blocks that need to be hidden
             self.hideBlocks(outfile)
             print('blocks hidden')            
-            #loading is applied
-            self.loadBlocks(outfile, j)
+
             
             #write the functions that can be called
             self.writeFunctions(outfile, writeFile, j)
