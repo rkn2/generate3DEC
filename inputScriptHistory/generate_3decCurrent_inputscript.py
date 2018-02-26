@@ -9,9 +9,9 @@ import generate_3decCurrent as gen
 #============================================================
 #INPUT SCRIPT
 # set up experiment
-filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/mike/baptistery/2019/rigid_simplified/existing/" 
+filePath= "C:/Users/Rebecca Napolitano/Documents/datafiles/mike/baptistery/2018/rigid_simplified/existing/" 
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
-outFileName = 'TEST2_3DEC_INPUT'
+outFileName = 'TEST3_3DEC_INPUT'
 iterator = 'base' #can iterate over base or load
 cycChoice = 'ratio' #can be ratio or loop or test
 solveRat = 1e-5
@@ -45,9 +45,9 @@ fixedstone = gen.material({'dens':2400,'fixity':'fix'})
 # pass input variables 
 #for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of all the variables that can be included
-my_experiment = experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
+my_experiment = gen.experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
                            load_min = 0, load_max = 1000, load_iterator = 1000, movieInterval = 1000,
-                           numCycLoops = 300, numCycles = 1000, arraySize = 3000000, threshold = 0.001,
+                           numCycLoops = 300, numCycles = 1000, arraySize = 3000000, threshold = 0.001, edge = 100, 
                            boundLoad = [], loadLocation = [], loadOrientation = [])
 # define joint materials
 mortar_stone = gen.jointMaterial({'jkn':1.0e9, 'jks':1.0e9, 'jfric': 37})

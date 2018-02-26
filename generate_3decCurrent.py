@@ -5,7 +5,6 @@
 
 import re
 import glob
-
 class material():
     # stores all metadata about a material
     def __init__(self, properties):
@@ -111,39 +110,56 @@ class experiment():
 
 
     #used in writegeometrybymat
-    def writeGeometry(self,j,outfile, geom):
+    def writeGeometry(self,j,outfile, geomEntry):
         #figures out an index for iteration based on the iterator and the geometry
-        if self.iterator == 'base' and geom.label == 'base':
-            index = j 
-        elif self.iterator == 'stone' and geom.label == 'stone':
+        
+#        for entry in self.iterator:
+#            if entry == geom.label:
+#                index = j
+#            else: 
+#                index = 0
+        print('write geometry geom ' + str(geomEntry.label))
+        if geomEntry.label in self.iterator:
             index = j
         else:
-            index = 0
-        print(index)
+            index = 0         
+                
+                
+#            if  == geom.label:
+#                index = j
+#        else:
+#            if self.iterator == 'base' and geom.label == 'base':
+#                index = j 
+#            elif self.iterator == 'stone' and geom.label == 'stone':
+#                index = j
+#            else:
+#                index = 0
+        print('This is the index ' + str(index))
         print(self.fileHandles['base'])
         #uses information about the iterator to make the index
-        openBlock = open(self.fileHandles[geom.label][index])
+        openBlock = open(self.fileHandles[geomEntry.label][index])
         dataBlock = openBlock.read()
         openBlock.close()
-        outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geom.label.upper())
+        outfile.write('\n;--------------------------------%s GEOMETRY-----------------------------------\n'%geomEntry.label.upper())
         outfile.write(dataBlock)
 
     #used in write3decfile to write geometry for materials
     def writeGeomandParam(self, i, outfile):
         #this writes geometry for any deformable materials
-        for geom in self.geometries:
-            keys = geom.material.properties.keys()
+        for geomEntry in self.geometries:
+            print('writegeomandparam geom ' + str(geomEntry.label))
+            keys = geomEntry.material.properties.keys()
             if 'edge' in keys:
-                self.writeGeometry(i, outfile, geom)
-                self.writeParams(outfile, geom)
+                self.writeGeometry(i, outfile, geomEntry)
+                self.writeParams(outfile, geomEntry)
         #outfile.write('\nshow \ngen edge ' + str(self.edge) + '\nhide')
 
         #this writes geometry for any rigid materials
-        for geom in self.geometries:
-            keys = geom.material.properties.keys()
+        for geomEntry in self.geometries:
+            keys = geomEntry.material.properties.keys()
             if 'edge' not in keys:
-                self.writeGeometry(i, outfile, geom)
-                self.writeParams(outfile, geom)
+                self.writeGeometry(i, outfile, geomEntry)
+                self.writeParams(outfile, geomEntry)
    
     #this function is called by write3decfile to assign material properties
     def assignMat(self, outfile):
@@ -426,20 +442,20 @@ class experiment():
             
             #SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
 
-    #used in write3dec file to change index and insertion for filename based on iterator
-    def setupSimulationBase(self,j):
-        self.runIndex = j
-        self.insertion = ''
-
-    #used in write3dec file to change index and insertion for filename based on iterator
-    def setupSimulationLoad(self, j):
-        self.runIndex = 0
-        self.insertion = '_' + str(j*self.load_iterator)
-        
-    #used in write3dec file to change index and insertion for filename based on iterator
-    def setupSimulationStone(self, j):
-        self.runIndex = j
-        self.insertion = ''
+#    #used in write3dec file to change index and insertion for filename based on iterator
+#    def setupSimulationBase(self,j):
+#        self.runIndex = j
+#        self.insertion = ''
+#
+#    #used in write3dec file to change index and insertion for filename based on iterator
+#    def setupSimulationLoad(self, j):
+#        self.runIndex = 0
+#        self.insertion = '_' + str(j*self.load_iterator)
+#        
+#    #used in write3dec file to change index and insertion for filename based on iterator
+#    def setupSimulationStone(self, j):
+#        self.runIndex = j
+#        self.insertion = ''
 
     #MAIN FUNCTION
     def write3DECFile(self):
@@ -452,35 +468,69 @@ class experiment():
         # next we need to get a list of the files so we can call them for writing
         # so lets make a list called fileHandles, we can do that in a different function above
         self.getFileHandles()
-
-        if self.iterator == 'base':
-            self.numSimulations = len(self.fileHandles['base'])
-        elif self.iterator == 'load':
+        
+        #check if load is in self.iterator
+        if 'load' in self.iterator:
             self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
-        elif self.iterator == 'stone':
-            self.numSimulations = len(self.fileHandles['stone'])
         else:
-            print('Iterator must be either base or load')
+            #check to make sure there are the same number of files in iterator file THIS SHOULD PROBABLY HAVE ERROR CHECKING
+#            iteratorEntry = 0
+#            while iteratorEntry < len(self.iterator):
+#                iteratorType = self.iterator[iteratorEntry]
+#                numFilesName = 'numFiles_' + str(iteratorType)
+#                = len(iteratorType)
+            iteratorType = str(self.iterator[0])    
+            print('This is the iterator type ' + iteratorType)
+            self.numSimulations = len(self.fileHandles[iteratorType])
+            print('This is how many simulations we have ' + str(self.numSimulations))
+
+#        if self.iterator == 'base':
+#            self.numSimulations = len(self.fileHandles['base'])
+#        elif self.iterator == 'load':
+#            self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
+#        elif self.iterator == 'stone':
+#            self.numSimulations = len(self.fileHandles['stone'])
+#        else:
+#            print('Iterator must be either base or load')
         
         filesToJoin = []
         
         for j in range(self.numSimulations):
             print ('This is iteration number ' + str(j))
-            if self.iterator == 'base':
-                self.setupSimulationBase(j)
+#            if self.iterator == 'base':
+#                self.setupSimulationBase(j)
+#            if self.iterator == 'load':
+#                self.setupSimulationLoad(j)
+#            if self.iterator == 'stone':
+#                self.setupSimulationStone(j)
             if self.iterator == 'load':
-                self.setupSimulationLoad(j)
-            if self.iterator == 'stone':
-                self.setupSimulationStone(j)
+                self.runIndex = 0
+                self.insertion = '_' + str(j*self.load_iterator)
+            else:
+                self.runIndex = j
+                self.insertion = ''
             print('iterator chosen...')
-            if self.iterator == 'base':
+#            if self.iterator == 'base':
+#                fileName = self.fileHandles['base'][self.runIndex]
+#            if self.iterator == 'load':
+#                fileName = self.fileHandles['base'][self.runIndex]
+#            if self.iterator == 'stone':
+#                fileName = self.fileHandles['stone'][self.runIndex]
+            if self.iterator[0] == 'load':
                 fileName = self.fileHandles['base'][self.runIndex]
-            if self.iterator == 'load':
-                fileName = self.fileHandles['base'][self.runIndex]
-            if self.iterator == 'stone':
-                fileName = self.fileHandles['stone'][self.runIndex]
+                fileName = fileName + self.load_iterator
+                print('fileName is ' + fileName)
+            else:
+                iterName = str(self.iterator[0])
+                print('iterName is ' + iterName)
+                fileName = self.fileHandles[iterName][self.runIndex]
+                print('fileName is ' + fileName)
             print('fileName chosen...')
-            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '').replace('_base','').replace('_stone','')
+            
+            for entry in self.iterator:
+                strToReplace = '_' + str(entry)
+                fileName = fileName.replace(strToReplace, '')     
+            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '')#.replace('_base','').replace('_stone','')
             print('filename fixing...')
             writeFile = fileName + self.insertion +'.3ddat'
             print('adding this to join list...')
