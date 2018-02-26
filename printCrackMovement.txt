@@ -1,0 +1,26 @@
+def crackFile
+  local ci = contact_head
+  m = 1
+  loop while ci # 0
+  	status1 = 'This is contact number ' + string(ci) 
+    local cxi = c_cx(ci)
+    loop while cxi # 0
+    	  status1 = status1 + ' \n\tThis is xcoord ' + string(cxi) + ' located at ' + string(cx_pos(cxi))
+      array n_disp(10000, 1) 
+      status1 = string(status1) + ' it has an ndisp of ' + string(cx_ndis(cxi)) + ' and a sheardisp of ' + string(cx_sdis(cxi))
+      cxi = cx_next(cxi)
+    end_loop
+    n_disp(m,1) = status1
+    m = m + 1
+    ci = c_next(ci)
+  end_loop
+  
+  fileName = 'test_ndisp.3ddat'
+  openFile = open(fileName, 1, 1)
+  writeFile = write(n_disp, m)
+  closeFile = close
+  loseArray = lose_array(n_disp)
+  
+end
+
+@crackFile
