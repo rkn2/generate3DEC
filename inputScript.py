@@ -9,9 +9,9 @@ import generate_3decCurrent as gen
 #============================================================
 #INPUT SCRIPT
 # set up experiment
-filePath= 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses/2018_2_15_varyheight/' 
+filePath= 'C:/Users/Rebecca Napolitano/Documents/datafiles/Romanbondingcourses/2018_2_15_varyheight/' #slashes must be this direction or it breaks
 functionPath = 'C:\\Users\\Rebecca Napolitano\\Documents\\GitHub\\generate3DEC\\'
-outFileName = '2018_2_15_varyheight'
+outFileName = 'TEST'
 iterator = ['stone','brick', 'concrete'] #can iterate over base or load or stone
 cycChoice = 'ratio' #can be ratio or loop or test
 solveRat = 1e-5
