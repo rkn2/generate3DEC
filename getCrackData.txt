@@ -1,0 +1,35 @@
+def getCrackData ; PRINT OUT NORMAL JOINT DISPLACEMENT
+	;get info about each contact
+	ci = contact_head
+	loop while ci # 0 
+		contact = string(ci)
+		;get info about subcontacts
+		si = c_cx(ci)
+		m = 1
+		loop while si # 0 
+			dm = 1
+			array crack_(INSERTarraysize , 1)  ;subcontact, ndisp, sdisp, x, y, z
+			;get subContact
+			subContact = string(si)
+			;get nDisp
+			nDisp = string(cx_ndis(si))
+			;get sDisp
+			sDisp = string(cx_sdis(si))
+			;get coords
+			xCoord = string(cx_x(si))
+			yCoord = string(cx_y(si))
+			zCoord = string(cx_z(si))
+			crack_(m,1) = subContact + ';' +  nDisp + ';' +  sDisp + ';' +  xCoord + ';' +  yCoord + ';' +  zCoord 
+
+			si = cx_next(si)
+			m = m + dm
+		end_loop
+		ci = c_next(ci)
+	end_loop
+
+	crackFileName = path + runName + crack_suffix
+   	openFile = open(crackFileName, IO_WRITE, IO_ASCII)
+	writeFile = write(crack_,m)
+	closeFile = close
+	loseArray = lose_array(crack_)	
+end
