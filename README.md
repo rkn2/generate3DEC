@@ -68,8 +68,7 @@ Then the materials are applied to specific geometries using the `my_experiment.a
 Dead loads are automatically applied in 3DEC when gravity is turned on. Therefore, nothing else needs to be added. 
 
 ###Earthquake load
-When passing the keyword arguments into `my_experiment = gen.experiment(...)` you will be using `boundLoad`, `loadLocation`, `loadOrientation`, `eqVertices`. 
-It defaults to a 0.2g earthquake. If you wanted to reduce it to differnet value, at the moment, take that into account in your number of vertices. 
+When passing the keyword arguments into `my_experiment = gen.experiment(...)` you will be using only `eqVertices`. You can just add this keyword to the pass through my_experiment. It defaults to a 0.2g earthquake. If you wanted to reduce it to differnet value, at the moment, take that into account in your number of vertices. 
 
 ###Settlement load
 This is done by passing bases with a particular geometry. There are not commands associated with this. 
