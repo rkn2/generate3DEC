@@ -288,9 +288,13 @@ class experiment():
             funcList.append(eachHandle)
         for eachHandle in self.movieHandles:
             funcList.append(eachHandle)            
-            
-        orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio', 'getCrackData',
-                       'cycLoop', 'getStress', 'getDisplacement', 'getFinalCentroid', 'getFinalVert', 'getCracks', 'makeCrackPlots', 'clearPlots']    
+        
+        #This is the list of the auxiliary functions which can be called. As named, this is an ordered list. 
+        #The order they appear here is the order they will appear in the script. 
+        
+        orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio',
+                       'cycLoop', 'getCrackData','getStress', 'getDisplacement', 'getFinalCentroid', 'getFinalVert', 
+                       'getCracks', 'makeCrackPlots', 'clearPlots']    
 
         funcDict = {}
         for entry in funcList:
