@@ -1,4 +1,6 @@
 # generate3DEC
+
+## Introduction to the input script 
 This is a python script that generates a single large input script for 3DEC which is comprised of multiple simulations. This input script uses .3ddat files which can be generated using .wrl files and the script wrl23ddat in generate3decModels. 
 
 If a user has more than one geometry they would like to simulate in the single input script, they can use the iterator input option. For instance, if a user has multiple bases representing differential settlement that they would like to run in conjunction with the same masonry wall on top, they can choose that their iterator is `"base"`. This iterator is taken from the last portion of the file name. So in my folder, I would have a file called test_base.3ddat. If they would like to switch out multiple concrete cores, and stone walls, and bricks and keep the base the same, the iterator input would be `"concrete, stone, brick"`.
@@ -53,10 +55,27 @@ The following variables are optional keyword arguments and can come in any order
 * `arraySize`
 * `threshold`
 * `boundLoad`
-* `loadLocation` For loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME'or 'x XCOORD y YCOORD z ZCOORD'
+* `loadLocation` For loadLocation, it goes bound VALUE range YYY; where YYY can be `group GROUPNAME`or `x XCOORD y YCOORD z ZCOORD`
 * `loadOrientation` This refers to x, y, or z.
 * `eqVertices` This is how many vertices the load will be applied on
 
 Then the materials are applied to specific geometries using the `my_experiment.addGeometry('nameofGeometry', nameMaterial, nameJointmaterial)`
 
-Single vs combined loads ...
+
+## How to apply loads in the input script
+### Dead load
+Dead loads are automatically applied in 3DEC when gravity is turned on. Therefore, nothing else needs to be added. 
+
+###Earthquake load
+When passing the keyword arguments into `my_experiment = gen.experiment(...)` you will be using `boundLoad`, `loadLocation`, `loadOrientation`, `eqVertices`. 
+It defaults to a 0.2g earthquake. If you wanted to reduce it to differnet value, at the moment, take that into account in your number of vertices. 
+
+###Settlement load
+This is done by passing bases with a particular geometry. There are not commands associated with this. 
+
+###Distributed load
+At the moment, to apply a distributed load, you need to figure out how many vertices you will be applying it to first. You can do this by applying a load of 0 to the area of interest in 3DEC. Then in the console it should say how many vertices it is. Then you can apply the distributed load using 'group GROUPNAME'or 'x XCOORD y YCOORD z ZCOORD'. 
+
+###Combination load
+All of the loads above are already combined with the dead load of the structure. To combine earthquake and settlement, just iterate over the base while you run the earthquake. 
+To combine earthquake and distributed load, you can put multiple loads in `boundLoad` as long as they are separated with commas. Then the information corresponding to each load should be found in the same order in `loadLocation` and `loadOrientation`. 
