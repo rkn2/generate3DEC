@@ -289,7 +289,7 @@ class experiment():
         for eachHandle in self.movieHandles:
             funcList.append(eachHandle)            
             
-        orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio',
+        orderedList = ['setup', 'getVolume','getInitCentroid', 'getInitVert', 'getNeighbors', 'makeMoviePlots', 'cycRatio', 'getCrackData',
                        'cycLoop', 'getStress', 'getDisplacement', 'getFinalCentroid', 'getFinalVert', 'getCracks', 'makeCrackPlots', 'clearPlots']    
 
         funcDict = {}

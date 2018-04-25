@@ -23,6 +23,7 @@ def setup ; SETUP KEY VARIABLES
 	disp_suffix = '_disp.dat'
 	stoneid_suffix = '_stoneid.dat'
 	group_suffix = '_group.dat'
+	crack_suffix = '_crack.dat'
 
 
 end

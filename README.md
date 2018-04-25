@@ -17,6 +17,7 @@ A user can choose what type of cycling they want for their simulations. Currentl
 * `getInitVert`
 * `getFinalVert`
 * `getNeighbors`
+* `getCrackData`
 
 `movieHandles = []` defines the auxilary movie functions to add. The following are the auxilary movie files:
 * `makeMoviePlots`
