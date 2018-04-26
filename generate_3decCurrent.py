@@ -359,7 +359,7 @@ class experiment():
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')                                    
         outfile.write('\n\t\tcommand'
                       + '\n\t\t\tDAMP LOCAL \n\t\t\tfacetri rad8 \n\t\t\tcyc @numCycles'
-                      + '\n\t\t\tsave @saveCyc')                      
+                      + '\n\t\t\t;save @saveCyc')                      
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         
