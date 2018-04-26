@@ -57,7 +57,7 @@ class experiment():
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0,
-                 boundLoad = 0, loadLocation = None, loadOrientation = None, eqVertices = 0):
+                 boundLoad = 0, loadLocation = None, loadOrientation = None, eqVertices = 0, eqScale = 0, eqFW = 0, eqDirection = None):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -84,6 +84,9 @@ class experiment():
         self.loadLocation = loadLocation
         self.loadOrientation = loadOrientation
         self.eqVertices = eqVertices
+        self.eqScale = eqScale
+        self.eqFW = eqFW
+        self.eqDirection = eqDirection
         
 
     # used to bring inputs into specific formats
@@ -188,12 +191,14 @@ class experiment():
             outfile.write('\nbound ' + self.changeLoadOrient + 'load ' + str(j*self.load_iterator) + ' ' + self.changeLoadLocation) 
         
         if self.eqVertices != 0:
-            #0.2*9.8*density*volume/vertices #dens hardcoded right now
-            startVal = fileName.rfind('_') + 1
-            volVar = float(fileName[startVal:])
-            volume = 213.89 * volVar - 29.266
-            eqBoundLoad = 0.2*9.8*2300*volume/self.eqVertices
-            outfile.write('\nbound xload ' + str(eqBoundLoad) + ' range x -1000 1000')
+#            #0.2*9.8*density*volume/vertices #dens hardcoded right now
+#            startVal = fileName.rfind('_') + 1
+#            volVar = float(fileName[startVal:])
+#            volume = 213.89 * volVar - 29.266
+#            eqBoundLoad = 0.2*9.8*2300*volume/self.eqVertices
+#            outfile.write('\nbound xload ' + str(eqBoundLoad) + ' range x -1000 1000')
+            eqBoundLoad = round((self.eqScale * self.eqFW)/self.eqVertices)
+            outfile.write('\nbound ' + self.eqDirection + 'load ' + str(eqBoundLoad) + ' range x -1000 1000')
         
         if self.boundLoad != 0 and self.loadLocation != None:
             if len(self.boundLoad) != len(self.loadLocation):

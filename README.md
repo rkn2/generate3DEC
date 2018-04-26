@@ -68,7 +68,7 @@ Then the materials are applied to specific geometries using the `my_experiment.a
 Dead loads are automatically applied in 3DEC when gravity is turned on. Therefore, nothing else needs to be added. 
 
 ###Earthquake load
-When passing the keyword arguments into `my_experiment = gen.experiment(...)` you will be using only `eqVertices`. You can just add this keyword to the pass through my_experiment. It defaults to a 0.2g earthquake. If you wanted to reduce it to differnet value, at the moment, take that into account in your number of vertices. 
+When passing the keyword arguments into `my_experiment = gen.experiment(...)` you will be using `eqVertices`, `eqFW`, `eqScale`, `eqDirection`. You can just add these keywords to the pass through my_experiment. `eqVertices` is the number of vertices this load will be applied to. You can do this by applying a load of 0 to the area of interest in 3DEC. Then in the console it should say how many vertices it is.`eqFW` is the FW of the building (volume * density * 9.8).The sign of `eqFW`is what denotes the direction of an earthquake. For instance if x is the direction and `eqFW` is positive, it will be applied to the right; if x is the direction and `eqFW` is negative, it will be applied to the left. The same is true for y: `eqFW` positive denotes into the screen, `eqFW` negative denotes out of the screen.  `eqScale` is how you control what scale of an earthquake it is 0.1g or 0.2g for example. You would just put in 0.1 or 0.2 though, the g is accounted for in the `eqFW` calculation. `eqDirection` denotes x or y for in- or out-of-plane earthquake motion. 
 
 ###Settlement load
 This is done by passing bases with a particular geometry. There are not commands associated with this. 
