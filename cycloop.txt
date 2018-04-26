@@ -4,7 +4,7 @@ def cycLoop
 			DAMP LOCAL
 			;facetri rad8
 			cyc @numCycles
-			save @saveCyc
+			;save @saveCyc
 		endcommand
 	end_loop
 end
