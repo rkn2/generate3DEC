@@ -197,7 +197,7 @@ class experiment():
 #            volume = 213.89 * volVar - 29.266
 #            eqBoundLoad = 0.2*9.8*2300*volume/self.eqVertices
 #            outfile.write('\nbound xload ' + str(eqBoundLoad) + ' range x -1000 1000')
-            eqBoundLoad = round((self.eqScale * self.eqFW)/self.eqVertices)
+            eqBoundLoad = (self.eqScale * self.eqFW)/self.eqVertices
             outfile.write('\nbound ' + self.eqDirection + 'load ' + str(eqBoundLoad) + ' range x -1000 1000')
         
         if self.boundLoad != 0 and self.loadLocation != None:
@@ -359,7 +359,7 @@ class experiment():
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')                                    
         outfile.write('\n\t\tcommand'
                       + '\n\t\t\tDAMP LOCAL \n\t\t\tfacetri rad8 \n\t\t\tcyc @numCycles'
-                      + '\n\t\t\t;save @saveCyc')                      
+                      + '\n\t\t\tsave @saveCyc')                      
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         
