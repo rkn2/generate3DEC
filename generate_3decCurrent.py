@@ -5,6 +5,9 @@
 
 import re
 import glob
+import itertools
+import numpy as np
+
 class material():
     # stores all metadata about a material
     def __init__(self, properties):
@@ -54,10 +57,10 @@ class geometry():
 
 class experiment():
     # holds all the necessary objects to run an experiment
-    def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio,
+    def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio, loadTypes,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
-                 movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0,
-                 boundLoad = 0, loadLocation = None, loadOrientation = None, eqBoundLoad = 0, eqDirection = None):
+                 movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0, 
+                 eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptD = [None], ptV = [None], ptL = [None]):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -78,14 +81,16 @@ class experiment():
         self.numCycLoops = numCycLoops
         self.numCycles = numCycles
         self.solveRatio = solveRatio
+        self.loadTypes = loadTypes
         self.arraySize = arraySize
         self.threshold = threshold
-        self.boundLoad = boundLoad
-        self.loadLocation = loadLocation
-        self.loadOrientation = loadOrientation
-        self.eqBoundLoad = eqBoundLoad
-        self.eqDirection = eqDirection
-        
+        self.eqVert = eqVert
+        self.eqFw = eqFw
+        self.eqD = eqD
+        self.eqS = eqS
+        self.ptD = ptD
+        self.ptV = ptV
+        self.ptL = ptL
 
     # used to bring inputs into specific formats
     def addGeometry(self, label, mat, jmat):
@@ -112,32 +117,15 @@ class experiment():
 
     #used in writegeometrybymat
     def writeGeometry(self,j,outfile, geomEntry):
-        #figures out an index for iteration based on the iterator and the geometry
-        
-#        for entry in self.iterator:
-#            if entry == geom.label:
-#                index = j
-#            else: 
-#                index = 0
         print('write geometry geom ' + str(geomEntry.label))
         if geomEntry.label in self.iterator:
             index = j
         else:
             index = 0         
-                
-                
-#            if  == geom.label:
-#                index = j
-#        else:
-#            if self.iterator == 'base' and geom.label == 'base':
-#                index = j 
-#            elif self.iterator == 'stone' and geom.label == 'stone':
-#                index = j
-#            else:
-#                index = 0
         print('This is the index ' + str(index))
         print(self.fileHandles['base'])
         #uses information about the iterator to make the index
+        print(' j equals ' + str(j))
         openBlock = open(self.fileHandles[geomEntry.label][index])
         dataBlock = openBlock.read()
         openBlock.close()
@@ -183,31 +171,57 @@ class experiment():
                 outfile.write('\nhide range group ' + geom.label)
     
     #this function is called by write3decfile to load blocks
-    def loadBlocks(self, outfile, j, fileName):
-        outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
-        if self.iterator == 'load':
-            outfile.write('\nbound ' + self.changeLoadOrient + 'load ' + str(j*self.load_iterator) + ' ' + self.changeLoadLocation) 
+#    def loadBlocks(self, outfile, j, fileName):
+#        outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
+#        if self.iterator == 'load':
+#            outfile.write('\nbound ' + self.changeLoadOrient + 'load ' + str(j*self.load_iterator) + ' ' + self.changeLoadLocation) 
+#        
+#        if self.eqBoundLoad != 0:
+#            outfile.write('\nbound ' + self.eqDirection + 'load ' + str(self.eqBoundLoad) + ' range x -1000 1000')
+#        
+#        if self.boundLoad != 0 and self.loadLocation != None:
+#            if len(self.boundLoad) != len(self.loadLocation):
+#                print('Differnet number of loads and positions')
+#            numberLoads = len(self.boundLoad)
+#            loadIndex = 0
+#            while loadIndex < numberLoads:
+#                outfile.write('\nbound ' + str(self.loadOrientation[loadIndex]) + 'load ' + str(self.boundLoad[loadIndex]) +' range ' + str(self.loadLocation[loadIndex]))
+#                loadIndex += 1
+#                
+    def vectorizeLoads(self, nonVectLoad, direction):           
+        #write something to vectorize loading for both earthquake and point loads (direction is in radians)
+        #we want out: x number, y number so probably a 2 by 2 matrix
         
-        if self.eqBoundLoad != 0:
-#            #0.2*9.8*density*volume/vertices #dens hardcoded right now
-#            startVal = fileName.rfind('_') + 1
-#            volVar = float(fileName[startVal:])
-#            volume = 213.89 * volVar - 29.266
-#            eqBoundLoad = 0.2*9.8*2300*volume/self.eqVertices
-#            outfile.write('\nbound xload ' + str(eqBoundLoad) + ' range x -1000 1000')
-#            eqBoundLoad = (self.eqScale * self.eqFW)/self.eqVertices
-            outfile.write('\nbound ' + self.eqDirection + 'load ' + str(self.eqBoundLoad) + ' range x -1000 1000')
-        
-        if self.boundLoad != 0 and self.loadLocation != None:
-            if len(self.boundLoad) != len(self.loadLocation):
-                print('Differnet number of loads and positions')
-            numberLoads = len(self.boundLoad)
-            loadIndex = 0
-            while loadIndex < numberLoads:
-                outfile.write('\nbound ' + str(self.loadOrientation[loadIndex]) + 'load ' + str(self.boundLoad[loadIndex]) +' range ' + str(self.loadLocation[loadIndex]))
-                loadIndex += 1
-
+        xLoad = nonVectLoad * np.cos(direction)
+        yLoad = nonVectLoad * np.sin(direction)        
+        return xLoad, yLoad
     
+    def loadBlocks(self, outfile, p, fileName):
+        outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
+        #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptD, ptL)
+        eqS = p[2]
+        #calculate eq bound load 
+        eqL = eqS * self.eqFw / self.eqVert
+        eqD = p[3]
+        if eqD != None:
+            vectLoad = self.vectorizeLoads(eqL, eqD)
+        if 'eq' in self.loadTypes:
+            orientation = 'x'
+            for entry in vectLoad:
+                outfile.write('\nbound ' + orientation + 'load ' + str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
+                orientation = 'y'
+        print('eq loads converted')        
+        ptV = p[4]
+        ptD = p[5]
+        ptL = p[6]
+        if ptD != None:
+            vectLoad = self.vectorizeLoads(ptV, ptD)
+        if 'pt' in self.loadTypes: 
+            orientation = 'x'
+            for entry in vectLoad:
+                outfile.write('\nbound ' + orientation + 'load ' + str(entry) + ' ' + ptL[6])
+                orientation = 'y'
+        print('pt loads converted')            
     #This is used in write functions
     def writemakeMoviePlots(self, outfile):
         moviePlotsOpen = open(self.filePath + 'makeMoviePlots.txt', 'w+')
@@ -385,7 +399,7 @@ class experiment():
         outfile.write('\n;This is only a test run')
     
     #this function is called by write3decfile to write all the functions and their calls
-    def writeFunctions(self, outfile, writeFile, j):
+    def writeFunctions(self, outfile, writeFile):
      
         outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
         
@@ -447,22 +461,6 @@ class experiment():
             self.fileHandles[geom.label] = glob.glob(self.filePath + '*_' + geom.label + '.3ddat')
             print(self.fileHandles['base'])
             
-            #SHOULD PROBABLY INCLUDE SOME ERROR CHECKING
-
-#    #used in write3dec file to change index and insertion for filename based on iterator
-#    def setupSimulationBase(self,j):
-#        self.runIndex = j
-#        self.insertion = ''
-#
-#    #used in write3dec file to change index and insertion for filename based on iterator
-#    def setupSimulationLoad(self, j):
-#        self.runIndex = 0
-#        self.insertion = '_' + str(j*self.load_iterator)
-#        
-#    #used in write3dec file to change index and insertion for filename based on iterator
-#    def setupSimulationStone(self, j):
-#        self.runIndex = j
-#        self.insertion = ''
 
     #MAIN FUNCTION
     def write3DECFile(self):
@@ -476,70 +474,58 @@ class experiment():
         # so lets make a list called fileHandles, we can do that in a different function above
         self.getFileHandles()
         
-        #check if load is in self.iterator
-        if 'load' in self.iterator:
-            self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
-        else:
-            #check to make sure there are the same number of files in iterator file THIS SHOULD PROBABLY HAVE ERROR CHECKING
-#            iteratorEntry = 0
-#            while iteratorEntry < len(self.iterator):
-#                iteratorType = self.iterator[iteratorEntry]
-#                numFilesName = 'numFiles_' + str(iteratorType)
-#                = len(iteratorType)
-            iteratorType = str(self.iterator[0])    
-            print('This is the iterator type ' + iteratorType)
-            self.numSimulations = len(self.fileHandles[iteratorType])
-            print('This is how many simulations we have ' + str(self.numSimulations))
+        #get list of geom that we will be iterating over 
+        i = 0
+        for iter in self.iterator: 
+            if iter == 'load':
+                loadPosition = i
+            i = i + 1
+#        if loadPosition == 0:
+#            iteratorType = str(self.iterator[1])    
+#            print('This is the iterator type ' + iteratorType)
+#            self.numGeom = len(self.fileHandles[iteratorType])
+#            print('This is how many different geom we have ' + str(self.numGeom))
+#        else: 
+#            iteratorType = str(self.iterator[0])    
+#            print('This is the iterator type ' + iteratorType)
+#            self.numGeom = len(self.fileHandles[iteratorType])
+#            print('This is how many different geom we have ' + str(self.numGeom))
 
-#        if self.iterator == 'base':
-#            self.numSimulations = len(self.fileHandles['base'])
-#        elif self.iterator == 'load':
-#            self.numSimulations = int((self.load_max-self.load_min)/self.load_iterator)
-#        elif self.iterator == 'stone':
-#            self.numSimulations = len(self.fileHandles['stone'])
-#        else:
-#            print('Iterator must be either base or load')
-        
+        if loadPosition == 0:
+            if len(self.iterator) > 1: #only load in the inputs so no other geomtries to change
+                iteratorType = str(self.iterator[1])
+            else:
+                iteratorType = 'base'
+            self.Geom = []
+            for entry in self.fileHandles[iteratorType]:
+                strToReplace = '_' + iteratorType 
+                entry = entry.replace(strToReplace, '')
+                self.Geom.append(entry)
+        else:
+            iteratorType = str(self.iterator[0])
+            self.Geom = []
+            for entry in self.fileHandles[iteratorType]:
+                strToReplace = '_' + iteratorType 
+                entry = entry.replace(strToReplace, '')
+                self.Geom.append(entry)
+                
         filesToJoin = []
+        #iterating over files
         
-        for j in range(self.numSimulations):
-            print ('This is iteration number ' + str(j))
-#            if self.iterator == 'base':
-#                self.setupSimulationBase(j)
-#            if self.iterator == 'load':
-#                self.setupSimulationLoad(j)
-#            if self.iterator == 'stone':
-#                self.setupSimulationStone(j)
-            if self.iterator == 'load':
-                self.runIndex = 0
-                self.insertion = '_' + str(j*self.load_iterator)
-            else:
-                self.runIndex = j
-                self.insertion = ''
-            print('iterator chosen...')
-#            if self.iterator == 'base':
-#                fileName = self.fileHandles['base'][self.runIndex]
-#            if self.iterator == 'load':
-#                fileName = self.fileHandles['base'][self.runIndex]
-#            if self.iterator == 'stone':
-#                fileName = self.fileHandles['stone'][self.runIndex]
-            if self.iterator[0] == 'load':
-                fileName = self.fileHandles['base'][self.runIndex]
-                fileName = fileName + self.load_iterator
-                print('fileName is ' + fileName)
-            else:
-                iterName = str(self.iterator[0])
-                print('iterName is ' + iterName)
-                fileName = self.fileHandles[iterName][self.runIndex]
-                print('fileName is ' + fileName)
-            print('fileName chosen...')
-            
-            for entry in self.iterator:
-                strToReplace = '_' + str(entry)
-                fileName = fileName.replace(strToReplace, '')     
-            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '')#.replace('_base','').replace('_stone','')
-            print('filename fixing...')
-            writeFile = fileName + self.insertion +'.3ddat'
+        #we have the number of geometry now
+        
+        iteration = 0
+        # the issue is that some of these can be empty so it doesnt get all the way through..
+        # a series of if else statmenets  feels redundant
+        P = [self.Geom, self.loadTypes, self.eqS, self.eqD, self.ptV, self.ptD, self.ptL]
+        for p in itertools.product(*P):
+            #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptD, ptL)
+            fileName = ''
+            for entry in p:
+                fileName = fileName + str(entry) + '_'
+            fileName = fileName[:-1].replace('.3ddat','') + '.3ddat' #remove the last underscore which is extra 
+            print('fileName is ' + fileName)
+            writeFile = fileName.replace(self.filePath, '')
             print('adding this to join list...')
             filesToJoin.append(writeFile)
             output = writeFile
@@ -547,7 +533,13 @@ class experiment():
             print('opening the file...')
             outfile = open(output, 'w+')
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-            outfile.write('new\n' + ';This is file ' + str(j) + '\n')
+            outfile.write('new\n' + ';This is file ' + str(iteration) + '\n')
+            #open the file and write the geometry and parameters
+            #to do that, we need to figure out what number geom we are on
+            #find location of p[0] in P[0]
+            j = P[0].index(p[0])
+            self.writeGeomandParam(j, outfile)
+            print('geom and param written')
             #open the file and write the geometry and parameters
             self.writeGeomandParam(j, outfile)
             print('geom and param written')
@@ -555,18 +547,68 @@ class experiment():
             self.assignMat(outfile)
             print('materials assigned')
             #loading is applied
-            self.loadBlocks(outfile, j, fileName)
+            self.loadBlocks(outfile, p, fileName)
             #when last geom and param are written, make sure to hide the blocks that need to be hidden
             self.hideBlocks(outfile)
-            print('blocks hidden')            
-
-            
+            print('blocks hidden')  
             #write the functions that can be called
-            self.writeFunctions(outfile, writeFile, j)
+            self.writeFunctions(outfile, writeFile)
                         
             outfile.close()
-            
+                        
+            iteration += 1
+
         print('Trying to join....')    
             
         #join all the files together
-        self.joinFiles(filesToJoin)
+        self.joinFiles(filesToJoin)        
+        
+#        for j in range(self.numSimulations): #INSTEAD OF FOR A NUMBER OF SIMULATIONS, DO IT AS A DOUBLE LOOP WHILE THERE ARE STILL THINGS IN THE GEOM AND THE LOAD LISTS
+#            print ('This is iteration number ' + str(j))
+#            if self.iterator == 'load':
+#                self.runIndex = 0
+#                self.insertion = '_' + str(j*self.load_iterator)
+#            else:
+#                self.runIndex = j
+#                self.insertion = ''
+#            print('iterator chosen...')
+#            if self.iterator[0] == 'load':
+#                fileName = self.fileHandles['base'][self.runIndex]
+#                fileName = fileName + self.load_iterator
+#                print('fileName is ' + fileName)
+#            else:
+#                iterName = str(self.iterator[0])
+#                print('iterName is ' + iterName)
+#                fileName = self.fileHandles[iterName][self.runIndex]
+#                print('fileName is ' + fileName)
+#            print('fileName chosen...')
+            
+#            for entry in self.iterator:
+#                strToReplace = '_' + str(entry)
+#                fileName = fileName.replace(strToReplace, '')     
+#            fileName = fileName.replace('.3ddat', '').replace(self.filePath, '')#.replace('_base','').replace('_stone','')
+#            print('filename fixing...')
+#            writeFile = fileName + self.insertion +'.3ddat'
+#            
+#            #open the file and write the geometry and parameters
+#            self.writeGeomandParam(j, outfile)
+#            print('geom and param written')
+#            #assign material properties
+#            self.assignMat(outfile)
+#            print('materials assigned')
+#            #loading is applied
+#            self.loadBlocks(outfile, j, fileName)
+#            #when last geom and param are written, make sure to hide the blocks that need to be hidden
+#            self.hideBlocks(outfile)
+#            print('blocks hidden')            
+#
+#            
+#            #write the functions that can be called
+#            self.writeFunctions(outfile, writeFile, j)
+                        
+#            outfile.close()
+            
+#        print('Trying to join....')    
+#            
+#        #join all the files together
+#        self.joinFiles(filesToJoin)
