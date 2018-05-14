@@ -179,9 +179,9 @@ class experiment():
     
     def loadBlocks(self, outfile, p, fileName):
         outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
-        #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptL)
-        eqS = p[2]
-        eqD = p[3]
+        #p here will be a tuple (filename, eqS, eqD, ptV, ptL)
+        eqS = p[1]
+        eqD = p[2]
         if 'eq' in self.loadTypes:
             #calculate eq bound load 
             eqL = eqS * self.eqFw / self.eqVert
@@ -191,8 +191,8 @@ class experiment():
                 outfile.write('\nbound ' + orientation + 'load ' + str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
                 orientation = 'y'
         print('eq loads converted')        
-        ptV = p[4]
-        ptL = p[5]
+        ptV = p[3]
+        ptL = p[4]
         if 'pt' in self.loadTypes: 
             orientation = str(ptL[0])
             outfile.write('\nbound ' + orientation + 'load ' + str(ptV) + ' ' + str(ptL[1]))
@@ -483,7 +483,7 @@ class experiment():
         iteration = 0
         # the issue is that some of these can be empty so it doesnt get all the way through..
         # a series of if else statmenets  feels redundant
-        P = [self.Geom, self.loadTypes, self.eqS, self.eqD, self.ptV, self.ptL]
+        P = [self.Geom, self.eqS, self.eqD, self.ptV, self.ptL]
         for p in itertools.product(*P):
             #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptL)
             fileName = ''
