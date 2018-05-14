@@ -204,9 +204,9 @@ class experiment():
         moviePlotsOpen.write('\n;This is a function to create movie plots.')
         moviePlotsOpen.write('\ndef makeMoviePlots \n\tcommand ')
         #takes the place of movie_setup_func
-        moviePlotsOpen.write('\n\t\tplot set movieactive false ;\n\t\tplot set movieprefix @runName' + 
-                             ';\n\t\tplot set moviein @movieInterval ;\n\t\tplot set index 1' + 
-                             ';\n\t\tplot set movieactive')
+        moviePlotsOpen.write('\n;\t\tplot set movieactive false \n;\t\tplot set movieprefix @runName' + 
+                             '\n;\t\tplot set moviein @movieInterval \n;\t\tplot set index 1' + 
+                             '\n;\t\tplot set movieactive')
         
         #takes the place of makemovieplots       
         for plotName in self.plots: 
@@ -489,7 +489,7 @@ class experiment():
             fileName = ''
             for entry in p:
                 fileName = fileName + str(entry) + '_'
-            fileName = fileName[:-1].replace('.3ddat','') + '.3ddat' #remove the last underscore which is extra 
+            fileName = fileName[:-1].replace('.3ddat','').replace('[','').replace(']','').replace("'",'').replace(',','_') + '.3ddat' #remove the last underscore which is extra 
             print('fileName is ' + fileName)
             writeFile = fileName.replace(self.filePath, '')
             print('adding this to join list...')
