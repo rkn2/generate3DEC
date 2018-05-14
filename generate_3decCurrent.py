@@ -60,7 +60,7 @@ class experiment():
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio, loadTypes,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0, 
-                 eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptD = [None], ptV = [None], ptL = [None]):
+                 eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None]):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -88,7 +88,6 @@ class experiment():
         self.eqFw = eqFw
         self.eqD = eqD
         self.eqS = eqS
-        self.ptD = ptD
         self.ptV = ptV
         self.ptL = ptL
 
@@ -180,12 +179,12 @@ class experiment():
     
     def loadBlocks(self, outfile, p, fileName):
         outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
-        #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptD, ptL)
+        #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptL)
         eqS = p[2]
-        #calculate eq bound load 
-        eqL = eqS * self.eqFw / self.eqVert
         eqD = p[3]
         if eqD != None:
+            #calculate eq bound load 
+            eqL = eqS * self.eqFw / self.eqVert
             vectLoad = self.vectorizeLoads(eqL, eqD)
         if 'eq' in self.loadTypes:
             orientation = 'x'
@@ -194,16 +193,12 @@ class experiment():
                 orientation = 'y'
         print('eq loads converted')        
         ptV = p[4]
-        ptD = p[5]
-        ptL = p[6]
-        if ptD != None:
-            vectLoad = self.vectorizeLoads(ptV, ptD)
+        ptL = p[5]
         if 'pt' in self.loadTypes: 
-            orientation = 'x'
-            for entry in vectLoad:
-                outfile.write('\nbound ' + orientation + 'load ' + str(entry) + ' ' + ptL[6])
-                orientation = 'y'
-        print('pt loads converted')            
+            orientation = str(ptL[0])
+            outfile.write('\nbound ' + orientation + 'load ' + str(ptV) + ' ' + str(ptL[1]))
+        print('pt loads converted')      
+        
     #This is used in write functions
     def writemakeMoviePlots(self, outfile):
         moviePlotsOpen = open(self.filePath + 'makeMoviePlots.txt', 'w+')
@@ -489,9 +484,9 @@ class experiment():
         iteration = 0
         # the issue is that some of these can be empty so it doesnt get all the way through..
         # a series of if else statmenets  feels redundant
-        P = [self.Geom, self.loadTypes, self.eqS, self.eqD, self.ptV, self.ptD, self.ptL]
+        P = [self.Geom, self.loadTypes, self.eqS, self.eqD, self.ptV, self.ptL]
         for p in itertools.product(*P):
-            #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptD, ptL)
+            #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptL)
             fileName = ''
             for entry in p:
                 fileName = fileName + str(entry) + '_'
