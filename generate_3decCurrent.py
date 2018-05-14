@@ -182,11 +182,10 @@ class experiment():
         #p here will be a tuple (filename, loadType, eqS, eqD, ptV, ptL)
         eqS = p[2]
         eqD = p[3]
-        if eqD != None:
+        if 'eq' in self.loadTypes:
             #calculate eq bound load 
             eqL = eqS * self.eqFw / self.eqVert
             vectLoad = self.vectorizeLoads(eqL, eqD)
-        if 'eq' in self.loadTypes:
             orientation = 'x'
             for entry in vectLoad:
                 outfile.write('\nbound ' + orientation + 'load ' + str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim

@@ -42,20 +42,20 @@ brick = gen.material({'dens':2508.67})
 #______________________________________________________________
 
 #define loads
-loadTypes = ['pt'] #can be 'eq','pt', or 'none' right now
+loadTypes = ['eq','pt'] #can be 'eq','pt', or 'none' right now
 #if you choose 'eq' then you need to provide the following: 
 #eqDStart, eqDIncrement, eqDEnd for the direction the load will be applied. 0 is x and to the left, 90 is y into the page, etc
-#eqDStart = 0 #always in radians
-#eqDIncrement = np.pi/2
-#eqDEnd = np.pi
-#eqDList = list(np.arange(eqDStart, eqDEnd + eqDIncrement, eqDIncrement))
-##eqVert, eqFw, eqSStart, eqSIncrement, eqSEnd for the calcuation of the load; eqS is scale of the eq ranging generally from 0 to 0.3g
-#eqVertVal = 744
-#eqFwVal = 2183.15
-#eqSStart = 0
-#eqSIncrement = 0.1
-#eqSEnd = 0.1
-#eqSList = list(np.arange(eqSStart, eqSEnd + eqSIncrement, eqSIncrement)) #cant calculate eqBoundLoad outhere since it will change with each eqS
+eqDStart = 0 #always in radians
+eqDIncrement = np.pi/2
+eqDEnd = np.pi
+eqDList = list(np.arange(eqDStart, eqDEnd + eqDIncrement, eqDIncrement))
+#eqVert, eqFw, eqSStart, eqSIncrement, eqSEnd for the calcuation of the load; eqS is scale of the eq ranging generally from 0 to 0.3g
+eqVertVal = 744
+eqFwVal = 2183.15
+eqSStart = 0
+eqSIncrement = 0.1
+eqSEnd = 0.1
+eqSList = list(np.arange(eqSStart, eqSEnd + eqSIncrement, eqSIncrement)) #cant calculate eqBoundLoad outhere since it will change with each eqS
 #if you choose 'pt' then you need to provide the following:
 #ptVStart, ptVIncrement, ptVEnd for the value of the load thatwill be applied
 ptVStart = -200
@@ -72,7 +72,7 @@ ptLList = [['x', 'range bid 31'],
 #for loadLocation, it goes bound VALUE range YYY; where YYY can be 'group GROUPNAME', 'x XCOORD y YCOORD z ZCOORD'
 #sample of the variables that can be included see readme for more information
 my_experiment = gen.experiment(filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio, loadTypes,
-                               #eqVert = eqVertVal, eqFw = eqFwVal, eqD = eqDList, eqS = eqSList, 
+                               eqVert = eqVertVal, eqFw = eqFwVal, eqD = eqDList, eqS = eqSList, 
                                ptV = ptVList, ptL = ptLList,
                                numCycLoops = 1, numCycles = 100, arraySize = 3000000)
 
