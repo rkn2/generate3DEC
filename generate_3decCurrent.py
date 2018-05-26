@@ -7,6 +7,7 @@ import re
 import glob
 import itertools
 import numpy as np
+import os
 
 class material():
     # stores all metadata about a material
@@ -445,9 +446,10 @@ class experiment():
 
 
     #join all the files
-    def joinFiles(self, filesToJoin):
+    def joinFiles(self, filesToJoin, fileNo):
         #join all the files together for one massive three dec script
-        openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
+        #openOutput = open(self.filePath + self.outFileName + '.3ddat', 'w+')
+        openOutput = open(self.filePath +self.outFileName + '_' +str(fileNo) +'.3ddat', 'w+')
         for file in filesToJoin:
             with open(file) as infile:
                 print('reading ' + file)
@@ -526,6 +528,7 @@ class experiment():
             fileName = fileName[:-1].replace('.3ddat','').replace('[','').replace(']','').replace("'",'').replace(',','_') + '.3ddat' #remove the last underscore which is extra 
             print('fileName is ' + fileName)
             writeFile = fileName.replace(self.filePath, '')
+            
             print('adding this to join list...')
             filesToJoin.append(writeFile)
             output = writeFile
@@ -560,9 +563,17 @@ class experiment():
             outfile.close()
                         
             iteration += 1
-
-        print('Trying to join....')    
             
-        #join all the files together
-        self.joinFiles(filesToJoin)        
-        print (str(iteration) + 's complete!')
+        print('Trying to join....')    
+        fileNo = 0
+        filesJoined = 0
+        maxFiles = 10000
+        while filesJoined < len(filesToJoin):
+            #join all the files together
+            end = np.min([filesJoined+maxFiles,len(filesToJoin)])
+            self.joinFiles(filesToJoin[filesJoined:end],fileNo)
+            print ('%d sims written of %d total'%(end-filesJoined,iteration))
+            fileNo += 1
+            filesJoined += maxFiles
+        for file in filesToJoin: 
+            os.remove(file)
