@@ -60,7 +60,7 @@ class experiment():
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio, loadTypes,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0, 
-                 eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None]):
+                 eqFreq = 0, eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None]):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -84,6 +84,7 @@ class experiment():
         self.loadTypes = loadTypes
         self.arraySize = arraySize
         self.threshold = threshold
+        self.eqFreq = eqFreq
         self.eqVert = eqVert
         self.eqFw = eqFw
         self.eqD = eqD
@@ -169,34 +170,62 @@ class experiment():
                 outfile.write('\n\n;--------------------------------HIDING SELECTED BLOCKS------------------------------------')
                 outfile.write('\nhide range group ' + geom.label)
     
-    def vectorizeLoads(self, nonVectLoad, direction):           
+    def vectorizeLoads(self, direction):           
         #write something to vectorize loading for both earthquake and point loads (direction is in radians)
         #we want out: x number, y number so probably a 2 by 2 matrix
         
-        xLoad = nonVectLoad * np.cos(direction)
-        yLoad = nonVectLoad * np.sin(direction)        
+        xLoad = np.cos(direction)
+        yLoad = np.sin(direction)        
         return xLoad, yLoad
     
     def loadBlocks(self, outfile, p, fileName):
         outfile.write('\n\n;--------------------------------LOADING BLOCKS------------------------------------')
         #p here will be a tuple (filename, eqS, eqD, ptV, ptL)
+        #earthquake
         eqS = p[1]
+#        print('This is eqS ')
+#        print(eqS)
         eqD = p[2]
         if 'eq' in self.loadTypes:
-            #calculate eq bound load 
-            eqL = eqS * self.eqFw / self.eqVert
-            vectLoad = self.vectorizeLoads(eqL, eqD)
-            orientation = 'x'
-            for entry in vectLoad:
-                outfile.write('\nbound ' + orientation + 'load ' + str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
-                orientation = 'y'
-        print('eq loads converted')        
+            if self.eqVert != 0: 
+                #calculate eq bound load static
+                eqL = eqS * self.eqFw / self.eqVert
+                vectLoad = self.vectorizeLoads(eqD)
+                orientation = 'x'
+                for entry in vectLoad:
+                    outfile.write('\nbound ' + orientation + 'load ' + eqL*str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
+                    orientation = 'y'
+            if self.eqFreq != 0:
+                if str(eqS) != '0.0':
+                    #calculate eq bound load dynamic
+                    outfile.write('\nfree \nbound zvel 0.0 range z -0.1 0')
+                    outfile.write('\ndef wave \n\twave = ' + str(eqS) + '*sin(2*pi*' + str(self.eqFreq) + '*time) \nend \n@wave')
+                    if eqD == 0:
+                        loadLine = '\nbound xvel 1.0 hist @wave range z 0'
+                    if eqD == np.pi/4:
+                        loadLine = '\nbound xvel 0.5 hist @wave range z 0'
+                        loadLine = '\nbound yvel 0.5 hist @wave range z 0'
+                    if eqD == np.pi/2:
+                        loadLine = '\nbound yvel 1.0 hist @wave range z 0'
+                    else:
+                        print('its because you hard coded earthquake direction')
+
+                    outfile.write(loadLine)
+#                    vectLoad = self.vectorizeLoads(eqD)
+#                    orientation = 'x'
+#                    for entry in vectLoad:
+#                        outfile.write('\nbound ' + orientation + 'vel 1.0 hist @wave range z 0') 
+#                        orientation = 'y'  
+                    outfile.write('\nmscale off \ndamp 0.05 80 mass')
+            print('eq loads converted') 
+        
+        #point/distributed loads
         ptV = p[3]
         ptL = p[4]
         if 'pt' in self.loadTypes: 
             orientation = str(ptL[0])
             outfile.write('\nbound ' + orientation + 'load ' + str(ptV) + ' ' + str(ptL[1]))
-        print('pt loads converted')      
+            print('pt loads converted')      
         
     #This is used in write functions
     def writemakeMoviePlots(self, outfile):
@@ -347,25 +376,30 @@ class experiment():
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')                                    
         outfile.write('\n\t\tcommand'
                       + '\n\t\t\tDAMP LOCAL \n\t\t\t;facetri rad8 \n\t\t\tcyc @numCycles'
-                      + '\n\t\t\tsave @saveCyc')                      
+                      + ';\n\t\t\tsave @saveCyc')                      
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         
         outfile.write('\n\t\tendcommand \n\tend_loop \nend')
     
     
-    def writeRatioLoop(self,outfile):
+    def writeRatioLoop(self,outfile,p):
+        if self.eqFreq != 0:
+            if str(p[1]) != '0.0':
+                solve2 = 'time ' + '%.2f' %(5/self.solveRatio) #max time is 5 seconds essentially
+            else:
+                solve2 = 'cyc 10000'
         outfile.write('\ndef cycRatio \n\trat = float("1e-0") \n\ti = 0'
                       + '\n\tcommand \n\t\tDAMP LOCAL \n\t\t;facetri rad8'
                       + '\n\tendcommand \n\tloop while i < solveRatio'
                       + '\n\t\ti_string = string(i) \n\t\trat = rat/2'
-                      + '\n\t\tsaveFile = saveCyc + "_" + string(i)')
+                      + '\n\t\t;saveFile = saveCyc + "_" + string(i)')
         if self.movieHandles == []:
             self.plots = []
         for plot in self.plots:
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')
-        outfile.write('\n\t\tcommand \n\t\t\tsolve ratio @rat cyc 10000'
-                      + '\n\t\t\tsave @saveCyc')
+        outfile.write('\n\t\tcommand \n\t\t\tsolve ratio @rat ' + solve2
+                      + '\n\t\t\t;save @saveCyc')
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         outfile.write('\n\t\tendcommand \n\t\ti = i + 1'
@@ -375,7 +409,7 @@ class experiment():
         outfile.write('\n;This is only a test run')
     
     #this function is called by write3decfile to write all the functions and their calls
-    def writeFunctions(self, outfile, writeFile):
+    def writeFunctions(self, outfile, writeFile,p):
      
         outfile.write('\n;;--------------------------------FUNCTIONS------------------------------------\n')
         
@@ -385,7 +419,7 @@ class experiment():
             self.writeCycLoop(outfile)
         
         if self.cycChoice == 'ratio':
-            self.writeRatioLoop(outfile)
+            self.writeRatioLoop(outfile,p)
             
         if self.cycChoice == 'test':
             self.writeTest(outfile)
@@ -499,7 +533,12 @@ class experiment():
             print('opening the file...')
             outfile = open(output, 'w+')
             outfile.write('\n;-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n')
-            outfile.write('new\n' + ';This is file ' + str(iteration) + '\n')
+            if self.eqFreq != 0:
+                if str(p[1]) != '0.0':
+                    startConfig = '\nconfig dyn \n'
+                else:
+                    startConfig = ''
+            outfile.write('new\n' + ';This is file ' + str(iteration) + startConfig)
             #open the file and write the geometry and parameters
             #to do that, we need to figure out what number geom we are on
             #find location of p[0] in P[0]
@@ -516,7 +555,7 @@ class experiment():
             self.hideBlocks(outfile)
             print('blocks hidden')  
             #write the functions that can be called
-            self.writeFunctions(outfile, writeFile)
+            self.writeFunctions(outfile, writeFile, p)
                         
             outfile.close()
                         
@@ -526,4 +565,4 @@ class experiment():
             
         #join all the files together
         self.joinFiles(filesToJoin)        
-        
+        print (str(iteration) + 's complete!')
