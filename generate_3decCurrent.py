@@ -480,10 +480,12 @@ class experiment():
         
         #get list of geom that we will be iterating over 
         i = 0
+        loadPosition = 'None'
         for iter in self.iterator: 
             if iter == 'load':
                 loadPosition = i
             i = i + 1
+
 
         if loadPosition == 0:
             if len(self.iterator) > 1: #only load in the inputs so no other geomtries to change
@@ -533,6 +535,8 @@ class experiment():
                     startConfig = '\nconfig dyn \n'
                 else:
                     startConfig = ''
+            else: 
+                startConfig = ''
             outfile.write('new\n' + ';This is file ' + str(iteration) + startConfig)
             #open the file and write the geometry and parameters
             #to do that, we need to figure out what number geom we are on
