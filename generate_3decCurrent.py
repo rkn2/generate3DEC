@@ -197,20 +197,12 @@ class experiment():
                     outfile.write('\nbound ' + orientation + 'load ' + eqL*str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
                     orientation = 'y'
             if self.eqFreq != 0:
-                if str(eqS) != '0.0':
+                if float(eqS) != 0.:
                     #calculate eq bound load dynamic
                     outfile.write('\nfree \nbound zvel 0.0 range z -0.1 0')
                     outfile.write('\ndef wave \n\twave = ' + str(eqS) + '*sin(2*pi*' + str(self.eqFreq) + '*time) \nend \n@wave')
-                    if eqD == 0:
-                        loadLine = '\nbound xvel 1.0 hist @wave range z 0'
-                    if eqD == np.pi/4:
-                        loadLine = '\nbound xvel 0.5 hist @wave range z 0'
-                        loadLine = '\nbound yvel 0.5 hist @wave range z 0'
-                    if eqD == np.pi/2:
-                        loadLine = '\nbound yvel 1.0 hist @wave range z 0'
-                    else:
-                        print('its because you hard coded earthquake direction')
-
+                    loadLine  = '\nbound xvel %f hist @wave range z 0'%np.cos(eqD)
+                    loadLine += '\nbound yvel %f hist @wave range z 0'%np.sin(eqD)
                     outfile.write(loadLine)
 #                    vectLoad = self.vectorizeLoads(eqD)
 #                    orientation = 'x'
@@ -567,7 +559,7 @@ class experiment():
         print('Trying to join....')    
         fileNo = 0
         filesJoined = 0
-        maxFiles = 10000
+        maxFiles = 2500
         while filesJoined < len(filesToJoin):
             #join all the files together
             end = np.min([filesJoined+maxFiles,len(filesToJoin)])
