@@ -61,7 +61,8 @@ class experiment():
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio, loadTypes,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0, 
-                 eqFreq = 0, eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None]):
+                 eqFreq = 0, eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None],
+                 boundLoad = [None], loadLocation = [None], loadOrientation = [None]):
         self.filePath = filePath
         self.functionPath = functionPath
         self.geometries = []
@@ -92,6 +93,9 @@ class experiment():
         self.eqS = eqS
         self.ptV = ptV
         self.ptL = ptL
+        self.boundLoad = boundLoad
+        self.loadLocation = loadLocation
+        self.loadOrientation = loadOrientation
 
     # used to bring inputs into specific formats
     def addGeometry(self, label, mat, jmat):
@@ -219,6 +223,17 @@ class experiment():
             orientation = str(ptL[0])
             outfile.write('\nbound ' + orientation + 'load ' + str(ptV) + ' ' + str(ptL[1]))
             print('pt loads converted')      
+        
+        if self.boundLoad != [None]:
+            if len(self.boundLoad) != len(self.loadOrientation) and len(self.boundLoad) != len(self.loadLocation):
+                print('wrong number of loads, orientations, and locations')
+            else:
+                loadEntry = 0
+                print(loadEntry)
+                while loadEntry < len(self.boundLoad):
+                    outfile.write('\nbound ' + str(self.loadOrientation[loadEntry]) + 'load ' + str(self.boundLoad[loadEntry]) + ' range ' + str(self.loadLocation[loadEntry]))
+                    loadEntry = loadEntry + 1
+                    print('static load written')
         
     #This is used in write functions
     def writemakeMoviePlots(self, outfile):
@@ -369,7 +384,7 @@ class experiment():
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')                                    
         outfile.write('\n\t\tcommand'
                       + '\n\t\t\tDAMP LOCAL \n\t\t\t;facetri rad8 \n\t\t\tcyc @numCycles'
-                      + ';\n\t\t\tsave @saveCyc')                      
+                      + '\n\t\t\tsave @saveCyc')                      
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         
@@ -382,6 +397,8 @@ class experiment():
                 solve2 = 'time ' + '%.2f' %(5/self.solveRatio) #max time is 5 seconds essentially
             else:
                 solve2 = 'cyc 10000'
+        else:
+            solve2 = 'cyc 10000'
         outfile.write('\ndef cycRatio \n\trat = float("1e-0") \n\ti = 0'
                       + '\n\tcommand \n\t\tDAMP LOCAL \n\t\t;facetri rad8'
                       + '\n\tendcommand \n\tloop while i < solveRatio'
