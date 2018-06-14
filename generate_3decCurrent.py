@@ -61,7 +61,7 @@ class experiment():
     def __init__(self, filePath, functionPath, outFileName, iterator, cycChoice, functionHandles, movieHandles, plots, solveRatio, loadTypes,
                  load_min = 0, load_max = 0, load_iterator = 0, changeLoadOrient = None, changeLoadLocation = None,
                  movieInterval = 0, numCycLoops = 0, numCycles = 0, arraySize = 0, threshold = 0, 
-                 eqFreq = 0, eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None],
+                 eqFreq = 0, eqVert = 0, eqFw = 0, eqD = [None], eqS = [None], ptV = [None], ptL = [None], saveCyc = 'no',
                  boundLoad = [None], loadLocation = [None], loadOrientation = [None]):
         self.filePath = filePath
         self.functionPath = functionPath
@@ -96,6 +96,7 @@ class experiment():
         self.boundLoad = boundLoad
         self.loadLocation = loadLocation
         self.loadOrientation = loadOrientation
+        self.saveCyc = saveCyc
 
     # used to bring inputs into specific formats
     def addGeometry(self, label, mat, jmat):
@@ -383,8 +384,9 @@ class experiment():
         for plot in self.plots:
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')                                    
         outfile.write('\n\t\tcommand'
-                      + '\n\t\t\tDAMP LOCAL \n\t\t\t;facetri rad8 \n\t\t\tcyc @numCycles'
-                      + '\n\t\t\tsave @saveCyc')                      
+                      + '\n\t\t\tDAMP LOCAL \n\t\t\t;facetri rad8 \n\t\t\tcyc @numCycles')
+        if self.saveCyc == 'yes':
+            outfile.write('\n\t\t\tsave @saveCyc')                      
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         
@@ -403,13 +405,14 @@ class experiment():
                       + '\n\tcommand \n\t\tDAMP LOCAL \n\t\t;facetri rad8'
                       + '\n\tendcommand \n\tloop while i < solveRatio'
                       + '\n\t\ti_string = string(i) \n\t\trat = rat/2'
-                      + '\n\t\t;saveFile = saveCyc + "_" + string(i)')
+                      + '\n\t\tsaveFile = saveCyc + "_" + string(i)')
         if self.movieHandles == []:
             self.plots = []
         for plot in self.plots:
             outfile.write('\n\t\t' + plot + 'File = saveFile + ' + '"_' + plot + '" + string(".png")')
-        outfile.write('\n\t\tcommand \n\t\t\tsolve ratio @rat ' + solve2
-                      + '\n\t\t\t;save @saveCyc')
+        outfile.write('\n\t\tcommand \n\t\t\tsolve ratio @rat ' + solve2)
+        if self.saveCyc == 'yes':
+            outfile.write('\n\t\t\tsave @saveCyc')  
         for plot in self.plots:
             outfile.write('\n\t\t\tplot bitmap plot ' + plot + ' filename @' + plot + 'File')
         outfile.write('\n\t\tendcommand \n\t\ti = i + 1'
