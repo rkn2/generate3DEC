@@ -199,6 +199,7 @@ class experiment():
                 vectLoad = self.vectorizeLoads(eqD)
                 orientation = 'x'
                 for entry in vectLoad:
+                    print('!!!!!!!!!!!!!!!!!!!!!\nbound ' + orientation + 'load ' +str(eqL*entry) + ' range x -1000 1000')
                     outfile.write('\nbound ' + orientation + 'load ' +str(eqL*entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
                     orientation = 'y'
             if self.eqFreq != 0:
