@@ -199,7 +199,7 @@ class experiment():
                 vectLoad = self.vectorizeLoads(eqD)
                 orientation = 'x'
                 for entry in vectLoad:
-                    outfile.write('\nbound ' + orientation + 'load ' + eqL*str(entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
+                    outfile.write('\nbound ' + orientation + 'load ' +str(eqL*entry) + ' range x -1000 1000') #I think it is fine to hard code range since its covering the whole sim
                     orientation = 'y'
             if self.eqFreq != 0:
                 if float(eqS) != 0.:
@@ -517,6 +517,21 @@ class experiment():
                 strToReplace = '_' + iteratorType 
                 entry = entry.replace(strToReplace, '')
                 self.Geom.append(entry)
+                
+#        if 'stone' and 'base' in self.load_iterator:
+#            stoneGeom = []
+#            for entry in self.fileHandles['stone']:
+#                strToReplace = '_' + iteratorType 
+#                entry = entry.replace(strToReplace, '')
+#                stoneGeom.append(entry)
+#            baseGeom = []
+#            for entry in self.fileHandles['base']:
+#                strToReplace = '_' + iteratorType 
+#                entry = entry.replace(strToReplace, '')
+#                baseGeom.append(entry)
+#            self.Geom = list(itertools.product(stoneGeom, baseGeom))
+#            print(+ str(self.Geom))
+        
         else:
             iteratorType = str(self.iterator[0])
             self.Geom = []
