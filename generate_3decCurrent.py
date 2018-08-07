@@ -195,7 +195,7 @@ class experiment():
         if 'eq' in self.loadTypes:
             if self.eqVert != 0: 
                 #calculate eq bound load static
-                eqL = eqS[0] * self.eqFw / self.eqVert
+                eqL = eqS * self.eqFw / self.eqVert
                 vectLoad = self.vectorizeLoads(eqD)
                 orientation = 'x'
                 for entry in vectLoad:
